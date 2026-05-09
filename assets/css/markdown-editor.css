@@ -1,0 +1,653 @@
+/* ========================================
+   Markdown 编辑器样式
+   ======================================== */
+
+/* 编辑器容器 */
+.md-editor-wrap {
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+/* 模式切换 tab */
+.md-mode-tabs {
+    display: flex;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.md-mode-tab {
+    padding: 8px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition);
+}
+
+.md-mode-tab:hover {
+    color: var(--text-secondary);
+}
+
+.md-mode-tab.active {
+    color: var(--accent-purple);
+    border-bottom-color: var(--accent-purple);
+    font-weight: 600;
+}
+
+/* 工具栏 */
+.md-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    padding: 6px 10px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.md-editor-toolbar button {
+    padding: 5px 8px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    transition: all var(--transition);
+    font-family: inherit;
+}
+
+.md-editor-toolbar button:hover {
+    background: var(--glass-hover-bg);
+    color: var(--accent-purple);
+    border-color: var(--accent-purple);
+}
+
+.md-toolbar-separator {
+    width: 1px;
+    margin: 2px 4px;
+    background: var(--glass-border);
+    align-self: stretch;
+}
+
+/* 编辑器主体 */
+.md-editor-body {
+    position: relative;
+}
+
+.md-editor-body.mode-edit .md-editor-preview-pane {
+    display: none;
+}
+
+.md-editor-body.mode-preview .md-editor-textarea {
+    display: none;
+}
+
+.md-editor-body.mode-preview .md-editor-preview-pane {
+    display: block;
+}
+
+.md-editor-body.mode-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.md-editor-body.mode-split .md-editor-textarea,
+.md-editor-body.mode-split .md-editor-preview-pane {
+    display: block;
+}
+
+.md-editor-body.mode-split .md-editor-textarea {
+    border-right: 1px solid var(--glass-border);
+}
+
+/* 文本输入区 */
+.md-editor-textarea {
+    width: 100%;
+    min-height: 360px;
+    padding: 16px;
+    background: var(--glass-bg);
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.92rem;
+    line-height: 1.8;
+    outline: none;
+    resize: vertical;
+    tab-size: 4;
+    box-sizing: border-box;
+}
+
+.md-editor-textarea:focus {
+    box-shadow: inset 0 0 0 2px rgba(167,139,250,0.15);
+}
+
+.md-editor-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+/* 预览面板 */
+.md-editor-preview-pane {
+    display: none;
+    min-height: 360px;
+    max-height: 600px;
+    padding: 16px;
+    background: var(--glass-bg);
+    overflow-y: auto;
+}
+
+.md-editor-preview-pane .md-preview-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 40px 0;
+}
+
+/* 预览区保留用户输入的连续空格 */
+.md-editor-preview-pane .markdown-body,
+.md-editor-preview-pane .markdown-body p,
+.md-editor-preview-pane .markdown-body li,
+.md-editor-preview-pane .markdown-body blockquote,
+.md-editor-preview-pane .markdown-body td,
+.md-editor-preview-pane .markdown-body th {
+    white-space: break-spaces;
+}
+
+.md-editor-preview-pane .markdown-body pre,
+.md-editor-preview-pane .markdown-body code {
+    white-space: pre-wrap;
+}
+
+/* 提示条 */
+.md-editor-hint {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--glass-border);
+}
+
+.md-editor-hint kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    font-family: inherit;
+}
+
+/* 草稿状态栏 */
+.md-draft-status {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 10px 10px 0;
+    padding: 12px 14px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    transition: all var(--transition);
+    overflow: hidden;
+}
+
+.md-draft-status::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(255,255,255,0.02);
+    opacity: 1;
+}
+
+.md-draft-status::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.08), 0 0 16px currentColor;
+    opacity: 1;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.md-draft-status-text,
+.md-draft-actions {
+    position: relative;
+    z-index: 1;
+}
+
+.md-draft-status-text {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.md-draft-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.md-draft-action-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--glass-hover-border);
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.06);
+    color: var(--text-primary);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    transition: all var(--transition);
+}
+
+.md-draft-action-btn:hover {
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+    background: rgba(167,139,250,0.12);
+    transform: translateY(-1px);
+}
+
+.md-draft-action-btn.is-danger:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    background: rgba(248,113,113,0.10);
+}
+
+.md-draft-status.is-idle {
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-color: var(--glass-border);
+}
+
+.md-draft-status.is-dirty {
+    color: var(--accent-yellow);
+    border-color: rgba(251,191,36,0.28);
+    background: rgba(251,191,36,0.10);
+    box-shadow: 0 8px 24px rgba(251,191,36,0.08);
+}
+
+.md-draft-status.is-saving {
+    color: var(--accent-cyan);
+    border-color: rgba(34,211,238,0.28);
+    background: rgba(34,211,238,0.10);
+    box-shadow: 0 8px 24px rgba(34,211,238,0.08);
+}
+
+.md-draft-status.is-saved,
+.md-draft-status.is-restored {
+    color: var(--text-primary);
+    border-color: rgba(167,139,250,0.35);
+    background: rgba(167,139,250,0.16);
+    box-shadow: 0 10px 28px rgba(167,139,250,0.18), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.md-draft-status.is-saved .md-draft-status-text,
+.md-draft-status.is-restored .md-draft-status-text {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(167,139,250,0.35);
+}
+
+.md-draft-status.is-error {
+    color: var(--accent-red);
+    border-color: rgba(248,113,113,0.32);
+    background: rgba(248,113,113,0.12);
+    box-shadow: 0 8px 24px rgba(248,113,113,0.10);
+}
+
+.md-draft-status.is-flash {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(167,139,250,0.22), 0 12px 32px rgba(167,139,250,0.20);
+}
+
+/* @提及联想 */
+.md-mention-popup {
+    position: absolute;
+    z-index: 1200;
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.md-mention-list {
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    gap: 4px;
+}
+
+.md-mention-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition);
+}
+
+.md-mention-item:hover,
+.md-mention-item.is-active {
+    background: rgba(167,139,250,0.14);
+    border-color: rgba(167,139,250,0.32);
+    color: var(--accent-purple);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .md-mode-tabs {
+        flex-wrap: wrap;
+    }
+    .md-mode-tab {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 8px 10px;
+    }
+    .md-editor-body.mode-split {
+        grid-template-columns: 1fr;
+    }
+    .md-editor-body.mode-split .md-editor-textarea {
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    .md-editor-toolbar {
+        gap: 2px;
+        padding: 5px 8px;
+    }
+    .md-editor-toolbar button {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
+    .md-editor-textarea,
+    .md-editor-preview-pane {
+        min-height: 260px;
+    }
+    .md-draft-status {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        margin: 10px 8px 0;
+        padding: 12px;
+    }
+    .md-draft-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .md-editor-toolbar {
+        max-height: 132px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .md-editor-hint {
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+}
+
+/* 文本转表格弹窗 */
+.md-text-table-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    background: rgba(0, 0, 0, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.md-text-table-modal-overlay.is-open {
+    display: flex;
+}
+
+.md-text-table-modal {
+    width: min(720px, 95vw);
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+
+.md-text-table-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--bg-tertiary);
+}
+
+.md-text-table-modal-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.md-text-table-close {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.md-text-table-close:hover {
+    color: var(--text-primary);
+}
+
+.md-text-table-modal-body {
+    padding: 14px 16px;
+}
+
+.md-text-table-tip {
+    margin: 0 0 8px;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+}
+
+.md-text-table-input {
+    width: 100%;
+    min-height: 180px;
+    resize: vertical;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    line-height: 1.6;
+}
+
+.md-text-table-example {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.md-text-table-example code {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.md-text-table-modal-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--bg-tertiary);
+}
+
+/* ========================================
+   Markdown 渲染内容样式（通用）
+   用于预览面板和内容展示页
+   ======================================== */
+.markdown-body {
+    line-height: 1.9;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+    color: var(--text-primary);
+    margin: 24px 0 12px;
+    font-weight: 600;
+}
+
+.markdown-body h1 { font-size: 1.6em; }
+.markdown-body h2 { font-size: 1.35em; }
+.markdown-body h3 { font-size: 1.15em; }
+.markdown-body h4 { font-size: 1.05em; }
+
+.markdown-body p {
+    margin-bottom: 12px;
+}
+
+.markdown-body img {
+    max-width: 100%;
+    border-radius: var(--radius-sm);
+    margin: 12px 0;
+    border: 1px solid var(--glass-border);
+}
+
+.markdown-body pre {
+    background: var(--bg-tertiary);
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.88rem;
+    margin: 12px 0;
+    border: 1px solid var(--glass-border);
+}
+
+.markdown-body code {
+    background: var(--glass-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.markdown-body pre code {
+    background: none;
+    padding: 0;
+}
+
+.markdown-body a {
+    color: var(--accent-purple);
+    text-decoration: underline;
+}
+
+.markdown-body a:hover {
+    color: var(--accent-pink);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+.markdown-body li {
+    margin-bottom: 4px;
+}
+
+.markdown-body blockquote {
+    margin: 12px 0;
+    padding: 12px 16px;
+    border-left: 4px solid var(--accent-purple);
+    background: rgba(167, 139, 250, 0.06);
+    color: var(--text-secondary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.markdown-body blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* 预览区表格横向滚动，兼容多列表 */
+.md-editor-preview-pane .markdown-body {
+    overflow-x: auto;
+}
+
+.markdown-body table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.9rem;
+}
+
+.markdown-body thead th {
+    background: var(--bg-tertiary);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+
+.markdown-body tbody td {
+    padding: 8px 12px;
+    border: 1px solid var(--glass-border);
+}
+
+.markdown-body tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.markdown-body hr {
+    border: none;
+    border-top: 1px solid var(--glass-border);
+    margin: 24px 0;
+}
+
+.markdown-body del {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.markdown-body strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}

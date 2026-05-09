@@ -1,0 +1,65 @@
+# =========================
+# Git ignore for PHP website
+# =========================
+
+# --- Git / OS / Editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+
+# 站点核心敏感配置（含数据库/邮件/API 密钥）
+/includes/config.php
+/config.php
+
+# 可选：如果你后续新增独立密钥文件
+secrets.php
+secrets.local.php
+
+# --- Logs / runtime ---
+*.log
+logs/
+*.pid
+*.tmp
+*.temp
+
+# --- Cache / sessions ---
+cache/
+/tmp/
+/sessions/
+
+# --- User-generated / uploads ---
+# 上传内容一般不建议进 Git（图片、附件、头像等）
+/data/**
+!/data/.gitkeep
+
+# --- Backup / export files ---
+*.sql
+*.sqlite
+*.sqlite3
+*.bak
+*.backup
+*.old
+*.zip
+*.7z
+*.rar
+
+# --- Node / frontend build artifacts (if introduced later) ---
+node_modules/
+dist/
+build/
+
+# --- Composer (vendor 按需选择) ---
+# 如果你使用 Composer 管理依赖，通常应忽略 vendor；
+# 但当前项目已包含 includes/PHPMailer 源码，可保留此规则注释。
+# vendor/
+nul
+NUL
