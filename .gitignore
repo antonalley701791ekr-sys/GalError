@@ -62,4 +62,4 @@ build/
 # 但当前项目已包含 includes/PHPMailer 源码，可保留此规则注释。
 # vendor/
 nul
-NUL
+NUL.user.ini
