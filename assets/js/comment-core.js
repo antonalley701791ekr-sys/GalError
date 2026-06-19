@@ -243,7 +243,16 @@
             if (wrapMap[action]) { wrapSelection(wrapMap[action][0], wrapMap[action][1], wrapMap[action][2]); renderPreview(); return; }
             if (action === 'link') { var url = prompt('请输入链接地址:', 'https://'); if (!url) return; wrapSelection('[', '](' + url + ')', '链接文本'); renderPreview(); return; }
             if (action === 'image') { if (config.multiImageUpload) { triggerMultiImageUpload(); } else { uploadImage(); } return; }
-            if (action === 'mention') { var name = prompt('请输入要提及的站内用户名:', ''); if (name == null) return; insertAtCursor('@' + String(name).replace(/^@+/, '').trim() + ' '); renderPreview(); return; }
+            if (action === 'mention') {
+                // 插入 @ 并立即弹出用户列表（输入更多字符可继续过滤、点击/回车选择），替代旧的手动 prompt 输入
+                insertAtCursor('@');
+                renderPreview();
+                state.editor.focus();
+                var mc = state.editor.selectionStart;
+                state.mentionRange = { query: '', start: mc - 1, end: mc };
+                fetchMentionSuggestions('');
+                return;
+            }
             if (action === 'codeblock') { insertAtCursor('\n```\n代码内容\n```\n'); renderPreview(); return; }
             if (action === 'ul') { insertAtLineStart('- '); renderPreview(); return; }
             if (action === 'ol') { insertAtLineStart('1. '); renderPreview(); return; }

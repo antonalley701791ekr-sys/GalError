@@ -339,7 +339,9 @@
 /* @提及联想 */
 .md-mention-popup {
     position: absolute;
-    z-index: 1200;
+    /* 评论模态框 .comment-modal-overlay 的 z-index 是 10000；此弹窗 append 到 body，
+       必须高于模态框，否则会被压在模态框后面看不见（@提及补全“失效”的根因）。 */
+    z-index: 10001;
     max-height: 280px;
     overflow-y: auto;
     border: 1px solid var(--glass-border);
