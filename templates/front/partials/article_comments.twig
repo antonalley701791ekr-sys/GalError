@@ -1,1 +1,12 @@
+{#
+  article_comments.twig —— 文章详情页「评论区」容器（单行内联渲染）
+  输入（由 article_page.twig 隐式继承）：
+    articleComments     [必填] 评论数组（注意变量名带 article 前缀）
+    articleCommentCount [必填] 评论总数 int
+    commentPagination   [必填] 分页对象 {page,totalPages,hasPrev,hasNext}
+    article.id          [必填] 文章 ID（拼分页链接）
+    is_logged_in        [必填] 是否登录（注意：此处用 is_logged_in，讨论页却用 _is_login —— 命名不统一）
+    request_uri         [必填] 当前 URL（未登录回跳）
+  子项：include article_comment.twig with { comment }。
+#}
 <section class="comment-section" style="margin-top:24px;"><div class="comment-section-header"><h3>评论区（<span id="commentCount">{{ articleCommentCount }}</span> 条）</h3>{% if is_logged_in %}<button class="btn btn-sm" onclick="openCommentModal()">发表评论</button>{% else %}<a href="/login?redirect={{ request_uri|url_encode }}" class="btn btn-sm">登录后评论</a>{% endif %}</div><div class="comment-list" id="commentList">{% for comment in articleComments %}{% include 'front/partials/article_comment.twig' with { comment: comment } %}{% else %}<div class="comment-empty" id="commentEmpty">暂无评论，来发表第一条评论吧</div>{% endfor %}</div>{% if commentPagination.totalPages > 1 %}<div class="pagination" style="margin-top:18px;">{% if commentPagination.page > 1 %}<a href="/article.php?id={{ article.id }}&comment_page=1#commentList">第一页</a>{% endif %}{% if commentPagination.hasPrev %}<a href="/article.php?id={{ article.id }}&comment_page={{ commentPagination.page - 1 }}#commentList">上一页</a>{% endif %}<span class="current">{{ commentPagination.page }} / {{ commentPagination.totalPages }}</span>{% if commentPagination.hasNext %}<a href="/article.php?id={{ article.id }}&comment_page={{ commentPagination.page + 1 }}#commentList">下一页</a>{% endif %}{% if commentPagination.page < commentPagination.totalPages %}<a href="/article.php?id={{ article.id }}&comment_page={{ commentPagination.totalPages }}#commentList">最后一页</a>{% endif %}</div>{% endif %}</section>

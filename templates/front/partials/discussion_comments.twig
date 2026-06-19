@@ -1,3 +1,17 @@
+{#
+  discussion_comments.twig —— 讨论详情页「评论区」容器
+  输入（由 discussion.twig 隐式继承）：
+    comments          [必填] 评论数组；空时显示空状态
+    commentCount      [必填] 评论总数 int
+    commentPagination [必填] 分页对象 {page,totalPages,hasPrev,hasNext}
+    discussion.id     [必填] 话题 ID（拼分页链接）
+    _is_login         [必填] 是否登录（控制 发表/登录 按钮）
+    request_uri       [必填] 当前 URL（未登录回跳）
+    current_user_id   [必填] 当前用户 ID —— 透传给 discussion_comment（判“编辑”）
+    is_admin          [必填] 是否管理员 —— 透传给 discussion_comment（判“删除”）
+  说明：子项以 with {comment,current_user_id,is_admin} 显式传参，其余靠隐式继承。
+        权限判断在模板内完成（_is_login/current_user_id/is_admin），与 error_detail 预算 can_* 的方式不同。
+#}
 <section class="comment-section">
     <div class="comment-section-header">
         <h3>评论区（<span id="commentCount">{{ commentCount }}</span> 条）</h3>

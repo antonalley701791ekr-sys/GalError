@@ -3,6 +3,54 @@
    玻璃拟态 + 紫粉渐变风格 + 双主题
    ============================================= */
 
+/* =================================================================
+   区块目录（导航索引）—— 用 Ctrl+F 搜下面的"区块名"即可跳转。
+   行号会随编辑漂移，仅供大致定位；以文件内各区块横幅注释为准。
+   -----------------------------------------------------------------
+   【全局基础】
+     Reset & Base                  ~L6
+     CSS Variables: Dark / Light   ~L13 / ~L48
+     Global                        ~L75
+     Background Layer / Container  ~L226 / ~L272
+   【前台 · 导航与布局】
+     Navigation / Header           ~L279
+     Nav Dropdown Menus            ~L850
+     Search Box                    ~L996
+     Main Content / Card · Section ~L1056 / ~L1061
+   【前台 · 列表与卡片】
+     Game List / Cards             ~L1091
+     Category List                 ~L1180
+     Error Items                   ~L1221
+   【前台 · 表单与控件】
+     Form Elements / Buttons       ~L1295 / ~L1345
+     Pagination / Footer           ~L1420 / ~L1452
+     Alert Messages / Announcement Bar  ~L1508 / ~L1527
+   【后台 ADMIN（整段）         ~L1561 起】
+     Admin Variables / Top Bar / Layout / Sidebar / Main /
+     Admin Cards / Buttons / Forms / Tables / Status Badges /
+     Stat Numbers / Alerts
+   【通用组件】
+     Toast Notifications           ~L2315
+     Cropper Modal                 ~L2369
+     Login Page / Animations       ~L2508 / ~L2573
+   【响应式】
+     Responsive: 1024 / 768 / 480  ~L2592 / ~L2599 / ~L2908
+     Global Mobile Layout Hardening ~L2933
+   【工具类】
+     Utilities                     ~L3157
+   【功能模块】
+     Slider CAPTCHA Modal          ~L3607
+     邮箱验证功能样式               ~L3852
+     Document Carousel / Detail    ~L4163 / ~L4400
+   【评论系统】
+     Comment Section / Reply       ~L4440 / ~L4680
+     Reject Modal / Reject·Markdown Modal  ~L4711 / ~L4906
+     Comment Modal                 ~L5048
+     Card Count Inline Icons       ~L5131
+     Discussion Page Specific      ~L5203
+     Responsive: Comment Modal     ~L5266
+   ================================================================= */
+
 /* ---- Reset & Base ---- */
 *, *::before, *::after {
     margin: 0;

@@ -1,3 +1,13 @@
+{#
+  discussion_comment.twig —— 单条讨论评论
+  输入（由 discussion_comments 以 with 显式传入）：
+    comment         [必填] 评论对象：id/content/content_html/avatar/username/user_id/created_at/
+                          parent_id/parent_username/parent_user_id/parent_quote_url/parent_content
+    current_user_id [必填] 当前用户 ID（== comment.user_id 时显示“编辑”）
+    is_admin        [必填] 管理员显示“删除”
+    _is_login       [必填] 登录后显示“回复/编辑”
+  说明：删除按钮调用 window.galDeleteComment（与文章页的 deleteComment 不同名，见 docs/评论系统梳理.md）。
+#}
 <div class="comment-item" id="comment-{{ comment.id }}" data-comment-content="{{ comment.content|e('html_attr') }}">
     <div class="comment-author">
         <span class="comment-author-info">
