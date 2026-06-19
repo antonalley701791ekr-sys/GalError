@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header">分类列表 <span style="float:right;color:var(--text-muted);font-weight:normal;">共 {{ categories|length }} 个分类</span></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>排序</th><th>分类名称</th><th>描述</th><th>报错数量</th><th>操作</th></tr></thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>{{ category.sort_order }}</td>
+                            <td><strong>{{ category.name }}</strong></td>
+                            <td>{{ category.description }}</td>
+                            <td><span class="badge" style="background:var(--glass-bg);color:var(--accent-purple);padding:2px 6px;border-radius:3px;font-size:12px;border:1px solid var(--glass-border);">{{ category.error_count|default(0) }}</span></td>
+                            <td>
+                                <a href="?action=edit&id={{ category.id }}" class="btn" style="font-size:12px;padding:4px 8px;">编辑</a>
+                                <form method="post" action="?id={{ category.id }}" style="display:inline;">
+                                    {{ csrf_input('admin_form')|raw }}
+                                    <input type="hidden" name="action" value="delete">
+                                    <button type="submit" class="btn btn-danger" style="font-size:12px;padding:4px 8px;" onclick="return confirm('确定要删除这个分类吗？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<section class="comment-section">
+    <div class="comment-section-header">
+        <h3>评论区（<span id="commentCount">{{ commentCount }}</span> 条）</h3>
+        {% if _is_login %}
+            <button class="btn btn-sm" onclick="openCommentModal()">发表评论</button>
+        {% else %}
+            <a href="/login?redirect={{ request_uri|url_encode }}" class="btn btn-sm">登录后评论</a>
+        {% endif %}
+    </div>
+    <div class="comment-list" id="commentList">
+        {% for comment in comments %}
+            {% include 'front/partials/discussion_comment.twig' with { comment: comment, current_user_id: current_user_id, is_admin: is_admin } %}
+        {% else %}
+            <div class="comment-empty" id="commentEmpty">暂无评论，来发表第一条评论吧</div>
+        {% endfor %}
+    </div>
+    {% if commentPagination.totalPages > 1 %}
+        <div class="pagination comment-pagination">
+            {% if commentPagination.page > 1 %}<a href="/discussion.php?id={{ discussion.id }}&comment_page=1#commentList">第一页</a>{% endif %}
+            {% if commentPagination.hasPrev %}<a href="/discussion.php?id={{ discussion.id }}&comment_page={{ commentPagination.page - 1 }}#commentList">上一页</a>{% endif %}
+            <span class="current">{{ commentPagination.page }} / {{ commentPagination.totalPages }}</span>
+            {% if commentPagination.hasNext %}<a href="/discussion.php?id={{ discussion.id }}&comment_page={{ commentPagination.page + 1 }}#commentList">下一页</a>{% endif %}
+            {% if commentPagination.page < commentPagination.totalPages %}<a href="/discussion.php?id={{ discussion.id }}&comment_page={{ commentPagination.totalPages }}#commentList">最后一页</a>{% endif %}
+        </div>
+    {% endif %}
+</section>

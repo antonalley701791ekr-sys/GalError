@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container">
+            <div class="mb-20" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <h2>文章列表</h2>
+                    {% if tag %}
+                        <p class="text-muted" style="margin-top:6px;">
+                            标签筛选：<strong style="color:var(--accent-purple);">{{ tag }}</strong>
+                            <a href="/articles" style="margin-left:8px;font-size:0.85rem;">清除</a>
+                        </p>
+                    {% endif %}
+                    <p class="text-muted" style="margin-top:4px;font-size:0.85rem;">共 {{ total }} 篇文章</p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="/" class="btn btn-secondary">返回首页</a>
+                    {% if _is_login %}
+                        <a href="/submit_article" class="btn">提交文章</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if articles is not empty %}
+                <div class="article-list-grid">
+                    {% for art in articles %}
+                        <a class="article-card" href="{{ art.url }}">
+                            <h3 class="article-list-title">{{ art.title }}</h3>
+                            <div class="article-list-meta">
+                                <span class="article-author-inline">{{ art.username }}</span>
+                                <span>{{ art.created_date }}</span>
+                                <span class="view-count-inline" title="浏览量">{{ art.view_count }}</span>
+                                <span class="comment-count-inline" title="评论数">{{ art.comment_count }}</span>
+                            </div>
+                            {% if art.tags is not empty %}
+                                <div class="article-list-tags">
+                                    {% for t in art.tags %}
+                                        <span class="article-tag-sm">{{ t }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <p class="article-list-summary">{{ art.summary }}{% if art.summary %}...{% endif %}</p>
+                        </a>
+                    {% endfor %}
+                </div>
+
+                {% if pagination.totalPages > 1 %}
+                    <div class="pagination">
+                        {% if pagination.hasPrev %}
+                            <a href="?{{ tag_query_prefix }}page={{ pagination.page - 1 }}">上一页</a>
+                        {% endif %}
+                        {% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}
+                            {% if i == pagination.page %}
+                                <span class="current">{{ i }}</span>
+                            {% else %}
+                                <a href="?{{ tag_query_prefix }}page={{ i }}">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.hasNext %}
+                            <a href="?{{ tag_query_prefix }}page={{ pagination.page + 1 }}">下一页</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center empty-state">
+                        <p>暂无文章</p>
+                        {% if _is_login %}
+                            <p class="text-muted">成为第一个分享的人吧！</p>
+                            <a href="/submit_article" class="btn" style="margin-top:12px;">提交文章</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+</body>
+</html>

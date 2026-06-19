@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _user_css_ver }}">
+    <link rel="stylesheet" href="/assets/css/markdown-editor.css?v={{ _markdown_editor_css_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    {% if from_admin %}
+    <div class="admin-layout">
+        {{ admin_sidebar_html|raw }}
+        <div class="admin-content">
+            <main class="admin-main">
+    {% else %}
+    <main class="main">
+    {% endif %}
+        <div class="container" style="max-width: 900px;">
+            <div class="article-breadcrumb-row mb-20">
+                <span>
+                    <a href="/">首页</a> &gt;
+                    <a href="/articles">文章区</a> &gt;
+                    <span style="color:var(--text-secondary);">{{ article.title_short|raw }}</span>
+                </span>
+                <a href="{{ back_list_url }}" class="btn btn-secondary btn-sm">返回列表</a>
+            </div>
+
+            <article class="card article-detail-card">
+                <div class="card-body" style="padding:28px;">
+                    <h1 class="article-detail-title">{{ article.title }}</h1>
+
+                    <div class="article-detail-meta">
+                        <span class="article-author js-user-card" data-user-id="{{ article.user_id }}" data-username="{{ article.username }}" data-avatar="{{ article.avatar_url }}">
+                            {% if article.avatar_url %}
+                                <img src="{{ article.avatar_url }}" class="article-author-avatar" alt="">
+                            {% else %}
+                                <span class="article-author-avatar fallback">{{ article.avatar_fallback }}</span>
+                            {% endif %}
+                            <a href="{{ article.author_url }}" class="detail-author-link">{{ article.username }}</a>
+                        </span>
+                        <span>{{ article.created_text }}</span>
+                        <span class="view-count-detail" title="浏览量">登录浏览：<span id="view-count-user">{{ article.view_user }}</span> | 访客浏览：<span id="view-count-guest">{{ article.view_guest }}</span></span>
+                    </div>
+
+                    {% if tags is not empty %}
+                    <div class="article-tags" style="margin-top: 8px;">
+                        {% for tag in tags %}
+                            <a href="/articles?tag={{ tag|url_encode }}" class="article-tag-sm">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if article.status == 'pending' or article.status == 'rejected' or article.has_pending_revision %}
+                    <div class="info-block {% if article.status == 'rejected' %}info-block-danger review-reject-reason {% else %}info-block-warning{% endif %}" style="margin-top:16px;">
+                        <strong>审核状态：</strong>{{ article.status_text }}
+                        {% if article.reject_reason %}
+                            <div class="review-reject-reason-content" style="margin-top:8px;">{{ article.reject_reason|nl2br }}</div>
+                        {% endif %}
+                        {% if article.has_pending_revision %}
+                            <div style="margin-top:8px;">当前文章有待审核修改。</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="article-content markdown-body">
+                        {{ article.content_html|raw }}
+                    </div>
+
+                    {% if action_html %}
+                    <div class="article-detail-actions" style="margin-top: 14px;">
+                        {{ action_html|raw }}
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+
+            {% if toc_html %}
+                {{ toc_html|raw }}
+            {% endif %}
+
+            {{ comments_html|raw }}
+        </div>
+    {% if from_admin %}
+            </main>
+        </div>
+    </div>
+    {{ admin_footer_scripts_html|raw }}
+    {% else %}
+    </main>
+    {% endif %}
+
+    {% include 'front/partials/article_comment_modal.twig' %}
+
+    {% if not from_admin %}
+    {{ footer_html|raw }}
+    {% endif %}
+    {{ page_scripts_html|raw }}
+    <script src="/assets/js/user-card.js?v={{ _user_card_js_ver }}"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<section class="mb-20">
+    <h2 class="card-header" style="display:flex;justify-content:space-between;align-items:center;">最新收录游戏<a href="/games" class="btn btn-secondary btn-sm" style="font-size:0.8rem;">更多</a></h2>
+    <div class="card-body">
+        <div class="game-list">
+            {% for game in games %}
+                <a href="{{ game.url }}" class="game-item">
+                    {% if game.cover_url %}
+                        <img src="{{ game.cover_url }}" alt="{{ game.title }}" class="game-cover" loading="lazy">
+                    {% else %}
+                        <div class="game-cover no-cover">暂无封面</div>
+                    {% endif %}
+                    <div class="game-title">{{ game.title }}</div>
+                    <div class="game-info">
+                        {% if game.developer %}<div>开发商：{{ game.developer }}</div>{% endif %}
+                        {% if game.release_date %}<div>发售日：{{ game.release_date }}</div>{% endif %}
+                        {% if game.vndb_id %}<div>VNDB：{{ game.vndb_id }}</div>{% endif %}
+                        <div class="view-count-inline" title="浏览量">{{ game.view_count }}</div>
+                        <div class="comment-count-inline" title="报错数">{{ game.error_count }}</div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

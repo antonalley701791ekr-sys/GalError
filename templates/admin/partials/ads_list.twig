@@ -1,0 +1,44 @@
+<div class="card">
+    <div class="card-header">广告列表 <span style="float: right; color: var(--text-muted); font-weight: normal;">共 {{ ads|length }} 条</span></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr><th>排序</th><th>类型</th><th>标题</th><th>位置</th><th>状态</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                    {% if ads is empty %}
+                        <tr><td colspan="6" class="text-center text-muted" style="padding: 40px;">暂无广告</td></tr>
+                    {% endif %}
+                    {% for ad in ads %}
+                        <tr>
+                            <td>{{ ad.sort_order }}</td>
+                            <td>{{ typeText[ad.type]|default(ad.type) }}</td>
+                            <td>
+                                <strong>{{ ad.title }}</strong>
+                                {% if ad.image %}<br><img src="/{{ ad.image }}" alt="" style="max-width:80px;max-height:40px;border-radius:4px;margin-top:4px;">{% endif %}
+                            </td>
+                            <td>{{ posText[ad.position]|default(ad.position) }}</td>
+                            <td><span class="status-{{ ad.enabled ? 'enabled' : 'disabled' }}">{{ ad.enabled ? '启用' : '禁用' }}</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="?action=edit&id={{ ad.id }}" class="btn btn-sm">编辑</a>
+                                    <form method="post" action="?id={{ ad.id }}" style="display:inline;">
+                                        {{ csrf_input('admin_form')|raw }}
+                                        <input type="hidden" name="action" value="toggle">
+                                        <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('确定切换该广告状态？')">{{ ad.enabled ? '禁用' : '启用' }}</button>
+                                    </form>
+                                    <form method="post" action="?id={{ ad.id }}" style="display:inline;">
+                                        {{ csrf_input('admin_form')|raw }}
+                                        <input type="hidden" name="action" value="delete">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('确定删除？')">删除</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

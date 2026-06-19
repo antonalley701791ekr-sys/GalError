@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label class="form-label">权限矩阵</label>
+    <table class="permission-matrix">
+        <thead><tr><th>模块</th>{% for act, label in actionLabels %}<th>{{ label }}</th>{% endfor %}</tr></thead>
+        <tbody>
+            {% for mod, info in permModules %}
+                <tr>
+                    <td>{{ info.label }}</td>
+                    {% for act, label in actionLabels %}
+                        <td>{% if act in info.actions %}<input type="checkbox" name="perm[{{ mod }}][]" value="{{ act }}" {{ mode == 'edit' and editAdmin._perms[mod] is defined and act in editAdmin._perms[mod] ? 'checked' : '' }}>{% else %}-{% endif %}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

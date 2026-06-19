@@ -1,0 +1,50 @@
+<div class="card">
+    <div class="card-header">{{ viewError.title }}</div>
+    <div class="card-body">
+        <div style="margin-bottom:16px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.88rem;color:var(--text-muted);">
+            <span>游戏：<strong style="color:var(--text-primary);">{{ viewError.game_title }}</strong></span>
+            <span>VNDB ID：{{ viewError.vndb_id|default('-') }}</span>
+            <span>分类：{{ viewError.category_name }}</span>
+            <span>作者：<strong style="color:var(--text-primary);">{{ viewError.submitter_name|default('未知') }}</strong></span>
+            <span>提交时间：{{ viewError.created_at|date('Y-m-d H:i') }}</span>
+            <span>状态：<span class="status status-{{ viewError.status }}">{{ viewError.status == 'pending' ? '待审核' : (viewError.status == 'approved' ? '已通过' : '已驳回') }}</span></span>
+        </div>
+
+        {% if viewError.reject_reason %}
+            <div class="info-block info-block-danger" style="margin-bottom:16px;">
+                <strong>驳回原因：</strong>{{ viewError.reject_reason }}
+            </div>
+        {% endif %}
+
+        <div class="detail-grid" style="margin-bottom:20px;">
+            <div class="detail-row"><div class="detail-label">现象</div><div class="detail-value">{{ viewError.phenomenon|default('-') }}</div></div>
+            <div class="detail-row"><div class="detail-label">系统类别</div><div class="detail-value">{{ viewError.system_category|default('-') }}</div></div>
+            <div class="detail-row"><div class="detail-label">系统信息</div><div class="detail-value">{{ viewError.system_info|default('-') }}</div></div>
+            <div class="detail-row"><div class="detail-label">引擎信息</div><div class="detail-value">{{ viewError.engine_info|default('-') }}</div></div>
+            <div class="detail-row"><div class="detail-label">问题描述</div><div class="detail-value markdown-body">{{ viewError.description|default('-')|raw }}</div></div>
+        </div>
+
+        <div class="btn-group">
+            {% include 'admin/partials/review_actions.twig' with {
+                canApprove: viewError.status == 'pending',
+                approveAction: '/admin/errors.php?id=' ~ viewError.id,
+                approveActionName: 'approve',
+                approveId: viewError.id,
+                approveLabel: '通过',
+                approveConfirm: '确认通过该报错？',
+                canReject: viewError.status == 'pending',
+                rejectAction: '/admin/errors.php?action=reject&id=' ~ viewError.id,
+                rejectId: viewError.id,
+                rejectLabel: '驳回',
+                rejectConfirm: '确认驳回该报错？',
+                rejectReason: viewError.reject_reason|default('未通过审核')
+            } %}
+            <form method="post" action="/admin/errors.php?id={{ viewError.id }}" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('确认删除此报错？');">删除</button>
+            </form>
+            <a href="errors.php" class="btn btn-secondary">返回列表</a>
+        </div>
+    </div>
+</div>

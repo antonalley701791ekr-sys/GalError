@@ -1,0 +1,6 @@
+{% set oldData = rev.old_data|json_decode %}
+{% set newData = rev.new_data|json_decode %}
+{% set fieldLabels = { 'title': '报错标题', 'phenomenon': '问题描述', 'system_category': '系统分类', 'system_info': '系统信息', 'android_cpu': '手机处理器', 'android_model': '手机机型', 'android_version': '安卓版本', 'patch_info': '汉化补丁', 'solution': '解决方案' } %}
+{% include 'admin/partials/errors_revision_fields_diff.twig' with { oldData: oldData, newData: newData, fieldLabels: fieldLabels } %}
+{% include 'admin/partials/errors_revision_images_diff.twig' with { title: '报错截图变化', addedImages: rev.added_screenshots|default([]), removedImages: rev.removed_screenshots|default([]), uploadUrl: constant('UPLOAD_URL') } %}
+{% include 'admin/partials/errors_revision_images_diff.twig' with { title: '解决方案截图变化', addedImages: rev.added_solution_screenshots|default([]), removedImages: rev.removed_solution_screenshots|default([]), uploadUrl: constant('UPLOAD_URL') } %}

@@ -1,0 +1,13 @@
+{% set content_html %}
+    {% if action == 'view' and viewGame %}
+        {% include 'admin/partials/games_detail.twig' with { game: viewGame } %}
+    {% elseif action == 'add' or action == 'edit' %}
+        {% include 'admin/partials/games_form.twig' with { game: editGame, formTitle: action == 'edit' ? '编辑游戏' : '添加游戏', submitLabel: action == 'edit' ? '更新游戏' : '添加游戏' } %}
+    {% else %}
+        {% include 'admin/partials/games_list.twig' %}
+    {% endif %}
+{% endset %}
+{% set extra_scripts_html %}
+    {% include 'admin/partials/reject_modal.twig' with { title: '填写驳回理由', action: '', csrf_html: csrf_input('admin_form') } %}
+{% endset %}
+{% include 'admin/layout.twig' %}

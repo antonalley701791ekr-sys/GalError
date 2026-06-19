@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="card-header">{{ action == 'add' ? '添加分类' : '编辑分类' }}</div>
+    <div class="card-body">
+        <form method="post">
+            {{ csrf_input('admin_form')|raw }}
+            <div class="form-group">
+                <label class="form-label">分类名称 *</label>
+                <input type="text" name="name" class="form-input" required value="{{ editCategory.name|default('') }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">描述</label>
+                <textarea name="description" class="form-textarea" rows="3">{{ editCategory.description|default('') }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">排序</label>
+                <input type="number" name="sort_order" class="form-input" value="{{ editCategory.sort_order|default(0) }}" min="0">
+                <small class="text-muted">数字越小排序越靠前</small>
+            </div>
+            <div class="form-group">
+                <div class="btn-group">
+                    <button type="submit" class="btn">{{ action == 'add' ? '添加分类' : '更新分类' }}</button>
+                    <a href="categories.php" class="btn btn-secondary">取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

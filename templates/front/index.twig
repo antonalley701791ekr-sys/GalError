@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page_title is defined and page_title %}{{ page_title }} - {% endif %}{{ _site_name }}</title>
+    <meta name="description" content="GalError（galerror.top）专注 Galgame 报错解决方案，提供游戏报错排查、修复教程、经验文章与讨论区。">
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+{{ header_html|raw }}
+{% include 'front/partials/index_search.twig' %}
+{{ announcement_html|raw }}
+{{ document_carousel_html|raw }}
+<main class="main"><div class="container">
+{% include 'front/partials/index_categories.twig' %}
+{% include 'front/partials/index_articles.twig' %}
+{% include 'front/partials/index_games.twig' %}
+{% include 'front/partials/index_errors.twig' %}
+{% include 'front/partials/index_discussions.twig' %}
+</div></main>
+{{ footer_html|raw }}
+</body></html>

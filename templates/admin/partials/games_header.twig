@@ -1,0 +1,10 @@
+<div class="admin-page-header">
+    <h1>{{ action == 'view' and viewGame ? '游戏详情' : (action == 'add' or action == 'edit' ? (action == 'edit' ? '编辑游戏' : '添加游戏') : '游戏管理') }}</h1>
+    {% if action == 'view' and viewGame %}
+        <a href="games.php" class="btn btn-secondary">返回列表</a>
+    {% elseif action == 'add' or action == 'edit' %}
+        <a href="games.php" class="btn btn-secondary">返回列表</a>
+    {% else %}
+        <a href="?action=add" class="btn">添加游戏</a>
+    {% endif %}
+</div>

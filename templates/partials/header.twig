@@ -1,0 +1,123 @@
+<script>
+window.__CSRF_TOKEN__ = {{ csrf_token_json|raw }};
+window.__API_CODE_MESSAGE_MAP__ = {{ api_code_message_map_json|raw }};
+
+window.getApiMessage = function(resp, fallback) {
+    var defaultMsg = fallback || '操作失败，请稍后重试';
+    if (!resp || typeof resp !== 'object') return defaultMsg;
+    var code = resp.code || '';
+    if (code && window.__API_CODE_MESSAGE_MAP__ && window.__API_CODE_MESSAGE_MAP__[code]) {
+        return window.__API_CODE_MESSAGE_MAP__[code];
+    }
+    if (resp.message && typeof resp.message === 'string') {
+        return resp.message;
+    }
+    return defaultMsg;
+};
+
+window.handleApiError = function(resp, fallback, options) {
+    var msg = window.getApiMessage(resp, fallback);
+    var code = resp && typeof resp === 'object' ? (resp.code || '') : '';
+    var opts = options || {};
+    function hasDirtyInput() {
+        try {
+            var selectors = 'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), textarea, select';
+            var nodes = document.querySelectorAll(selectors);
+            for (var i = 0; i < nodes.length; i++) {
+                var el = nodes[i];
+                if (!el || el.disabled || el.readOnly) continue;
+                if (el.tagName === 'SELECT') { if (el.selectedIndex > 0) return true; continue; }
+                var val = (el.value || '').trim();
+                if (val !== '') return true;
+            }
+        } catch (e) {}
+        return false;
+    }
+    if (code === 'csrf_failed') {
+        var shouldReload = typeof opts.autoReloadOnCsrfFailed === 'boolean' ? opts.autoReloadOnCsrfFailed : true;
+        var preventWhenDirty = typeof opts.preventReloadWhenDirty === 'boolean' ? opts.preventReloadWhenDirty : true;
+        if (shouldReload && (!preventWhenDirty || !hasDirtyInput())) {
+            var delayMs = typeof opts.reloadDelayMs === 'number' ? opts.reloadDelayMs : 1200;
+            setTimeout(function() { try { window.location.reload(); } catch (e) {} }, Math.max(0, delayMs));
+        }
+    }
+    return msg;
+};
+</script>
+<header class="header">
+    <div class="container">
+        <a href="/" class="logo">
+            {% if site_logo %}
+                <img src="/{{ site_logo }}" alt="" class="logo-img">
+            {% endif %}
+            {{ site_name }}
+        </a>
+        <nav class="nav">
+            <a href="/">首页</a>
+            <div class="nav-dropdown-wrapper">
+                <span class="nav-dropdown-trigger">文章</span>
+                <div class="nav-dropdown-menu"><div class="nav-dropdown-menu-inner">
+                    <a href="/articles" class="nav-dropdown-menu-item">文章列表</a>
+                    <a href="{{ submit_article_url }}" class="nav-dropdown-menu-item">提交文章</a>
+                </div></div>
+            </div>
+            <div class="nav-dropdown-wrapper">
+                <span class="nav-dropdown-trigger">游戏</span>
+                <div class="nav-dropdown-menu"><div class="nav-dropdown-menu-inner">
+                    <a href="/games" class="nav-dropdown-menu-item">游戏列表</a>
+                    <a href="/submit_game" class="nav-dropdown-menu-item">提交游戏</a>
+                </div></div>
+            </div>
+            <div class="nav-dropdown-wrapper">
+                <span class="nav-dropdown-trigger">报错/解决方案</span>
+                <div class="nav-dropdown-menu"><div class="nav-dropdown-menu-inner">
+                    <a href="/error_solutions.php" class="nav-dropdown-menu-item">报错/解决方案列表</a>
+                    <a href="/submit" class="nav-dropdown-menu-item">提交报错/解决方案</a>
+                </div></div>
+            </div>
+            <div class="nav-dropdown-wrapper">
+                <span class="nav-dropdown-trigger">讨论区</span>
+                <div class="nav-dropdown-menu"><div class="nav-dropdown-menu-inner">
+                    <a href="/discussions" class="nav-dropdown-menu-item">讨论区</a>
+                    <a href="{{ submit_discussion_url }}" class="nav-dropdown-menu-item">提交话题</a>
+                </div></div>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题"></button>
+            {% if is_logged_in %}
+                <div class="user-avatar-wrapper">
+                    <button class="user-avatar-btn" type="button" aria-label="用户菜单">
+                        {% if avatar_url %}
+                            <img src="{{ avatar_url }}" class="user-avatar-nav" alt="">
+                        {% else %}
+                            <div class="user-avatar-nav fallback">{{ user_initial }}</div>
+                        {% endif %}
+                    </button>
+                    {% if has_unread %}<span class="avatar-unread-dot"></span>{% endif %}
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-header">
+                            <div class="user-dropdown-name">{{ username }}</div>
+                            <span class="user-role-badge role-{{ user_role }}">{{ role_label }}</span>
+                        </div>
+                        <a href="/profile" class="user-dropdown-item">个人主页</a>
+                        <a href="/messages" class="user-dropdown-item">系统通知{% if unread_msg_count > 0 %}<span class="dropdown-unread-dot"></span>{% endif %}</a>
+                        <a href="/private_messages" class="user-dropdown-item">私信{% if unread_pm_count > 0 %}<span class="dropdown-unread-dot"></span>{% endif %}</a>
+                        {% if is_admin %}<a href="/admin/" class="user-dropdown-item">管理后台</a>{% endif %}
+                        <div class="user-dropdown-divider"></div>
+                        <a href="/logout" class="user-dropdown-item user-dropdown-logout">退出登录</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login" class="nav-auth-btn">登录</a>
+                <a href="/register" class="nav-auth-btn nav-auth-register">注册</a>
+            {% endif %}
+        </nav>
+        <button class="nav-mobile-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+</header>
+{% if is_logged_in %}
+    <div class="todo-floating-dock" id="todoFloatingDock">
+        <button type="button" class="todo-floating-toggle" aria-label="展开网站待办" aria-expanded="false"><span aria-hidden="true">›</span></button>
+        <a href="/todos" class="todo-floating-entry" title="网站待办" aria-label="网站待办"></a>
+    </div>
+    <script src="/assets/js/todo-floating.js?v={{ _todo_floating_js_ver }}"></script>
+{% endif %}

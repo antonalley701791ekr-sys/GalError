@@ -1,0 +1,2 @@
+{% include 'admin/partials/revision_diff_images.twig' with { title: '报错截图变化', addedImages: rev.added_screenshots|default([]), removedImages: rev.removed_screenshots|default([]), uploadUrl: constant('UPLOAD_URL') } %}
+{% include 'admin/partials/revision_diff_images.twig' with { title: '解决方案截图变化', addedImages: rev.added_solution_screenshots|default([]), removedImages: rev.removed_solution_screenshots|default([]), uploadUrl: constant('UPLOAD_URL') } %}

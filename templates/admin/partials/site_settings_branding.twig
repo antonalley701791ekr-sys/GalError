@@ -1,0 +1,20 @@
+<div class="card settings-section">
+    <div class="card-header">网站 Logo</div>
+    <div class="card-body">
+        {% if settings.site_logo is defined and settings.site_logo %}
+            <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <img src="/{{ settings.site_logo }}" alt="当前 Logo" style="height: 40px; width: auto; border-radius: 4px; border: 1px solid var(--glass-border); padding: 4px; background: var(--glass-bg);">
+                <span class="text-muted" style="font-size: 13px;">当前 Logo</span>
+            </div>
+        {% endif %}
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="file" name="site_logo" class="form-input" accept="image/*" style="max-width: 400px;">
+            {% if settings.site_logo is defined and settings.site_logo %}
+                <label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 4px;">
+                    <input type="checkbox" name="delete_logo" value="1"> <span class="text-muted" style="font-size: 13px;">删除 Logo</span>
+                </label>
+            {% endif %}
+        </div>
+        <p class="form-hint">显示在前台导航栏和后台侧边栏站点名称左侧，支持 PNG/SVG/ICO 等格式，建议高度 40px</p>
+    </div>
+</div>

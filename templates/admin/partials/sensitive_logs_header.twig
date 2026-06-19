@@ -1,0 +1,10 @@
+<div class="admin-page-header" style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
+    <div>
+        <h1>敏感词命中日志</h1>
+        <p class="text-muted" style="margin-top:8px;">用于排查误伤、补充白名单和观察异常提交。</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a href="url_whitelist.php" class="btn btn-secondary">管理链接白名单</a>
+        <div class="text-muted">当前显示 {{ records|length }} 条</div>
+    </div>
+</div>

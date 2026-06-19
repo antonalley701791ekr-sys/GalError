@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报错/解决方案列表 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container">
+            {% include 'front/partials/error_solutions_header.twig' %}
+            {% include 'front/partials/error_solutions_filters.twig' %}
+            {% include 'front/partials/error_solutions_list.twig' %}
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提交报错 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+    {{ announcement_html|raw }}
+    <main class="main">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">提交 Galgame 报错</div>
+                <div class="card-body">
+                    {% if message %}<div class="alert-{{ message_type }}">{{ message }}</div>{% endif %}
+                    <div class="text-muted" style="margin-bottom: 16px; line-height: 1.7;">
+                        你可以先只提交报错，解决方案是可选项，也可以之后在详情页继续补充。
+                    </div>
+                    <form method="post" enctype="multipart/form-data" onsubmit="return confirm('确认提交报错吗？提交后将进入审核或直接发布。');">
+                        {{ csrf_html|raw }}
+                        <div class="form-group"><label class="form-label">VNDB ID 查询（可选）</label><div class="inline-field-group"><input type="text" id="vndb_id_input" class="form-input" placeholder="例如：v12345"><button type="button" id="vndbSearchBtn" class="btn btn-secondary" onclick="searchGameByVndb()">查询游戏</button></div><div id="vndbSearchResult"></div></div>
+                        <div class="form-group"><label class="form-label">选择游戏 *</label><select name="game_id" id="game_select" class="form-select" required><option value="">请选择游戏</option>{% for game in games %}<option value="{{ game.id }}"{% if selected_game_id == game.id %} selected{% endif %}>{{ game.title }}{% if game.vndb_id %}({{ game.vndb_id }}){% endif %}</option>{% endfor %}</select></div>
+                        <div class="form-group"><label class="form-label">报错分类 *</label><select name="category_id" class="form-select" required><option value="">请选择分类</option>{% for category in categories %}<option value="{{ category.id }}"{% if form.category_id == category.id %} selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+                        <div class="form-group"><label class="form-label">报错标题 *</label><input type="text" name="title" class="form-input" placeholder="例如：启动闪退、0xc000007b、字体乱码等" required value="{{ form.title }}"></div>
+                        <div class="form-group"><label class="form-label">错误现象 *</label><textarea name="phenomenon" class="form-textarea" rows="4" placeholder="详细描述错误现象、弹窗内容、出现时机等" required>{{ form.phenomenon }}</textarea></div>
+                        <div class="form-group"><label class="form-label">游戏引擎信息</label><input type="text" name="engine_info" class="form-input" placeholder="例如：Kirikiri2（KRKR2）、BGI、Artemis" value="{{ form.engine_info }}"></div>
+                        <div class="form-group"><label class="form-label">系统分类 *</label><select name="system_category" id="system_category_select" class="form-select" required>{% for value,label in system_category_options %}<option value="{{ value }}"{% if form.system_category == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+                        <div class="form-group"><label class="form-label">系统信息 *</label><input type="text" name="system_info" id="system_info_input" class="form-input" placeholder="例如：Windows10 64位 / Windows11 专业版" required value="{{ form.system_info }}"></div>
+                        <div id="android-extra-fields" style="display:none;"><div class="form-group"><label class="form-label">手机处理器 *</label><input type="text" name="android_cpu" id="android_cpu_input" class="form-input" placeholder="例如 骁龙8 Gen2 / 天玑9200" value="{{ form.android_cpu }}" required></div><div class="form-group"><label class="form-label">手机机型 *</label><input type="text" name="android_model" id="android_model_input" class="form-input" placeholder="例如 小米13 / 华为p90 / 一加ACE3" value="{{ form.android_model }}" required></div><div class="form-group"><label class="form-label">安卓版本 *</label><input type="text" name="android_version" id="android_version_input" class="form-input" placeholder="例如 安卓13 / 安卓14" value="{{ form.android_version }}" required></div></div>
+                        <div class="form-group"><label class="form-label">汉化补丁</label><input type="text" name="patch_info" class="form-input" placeholder="汉化组名称、版本号等" value="{{ form.patch_info }}"></div>
+                        <div class="form-group"><label class="form-label">报错截图（可选，最多5张）</label><input type="file" name="screenshots[]" class="form-input" accept="image/*" multiple><small class="text-muted">支持 JPG、PNG、GIF 格式，单个文件最大 4MB。</small></div>
+                        <div class="form-group"><label class="form-label">是否有解决方案</label><div class="radio-group"><label class="radio-label"><input type="radio" name="has_solution" value="no"{% if form.has_solution != 'yes' %} checked{% endif %} onchange="toggleSolution()"> 否</label><label class="radio-label"><input type="radio" name="has_solution" value="yes"{% if form.has_solution == 'yes' %} checked{% endif %} onchange="toggleSolution()"> 是</label></div><small class="text-muted">选“否”可先提交报错，其他用户可在详情页补充解决方案</small></div>
+                        <div class="form-group"><label class="form-label">解决方案</label><textarea name="solution" id="solution_textarea" class="form-textarea" rows="6" placeholder="详细描述解决步骤和方法"{% if form.has_solution != 'yes' %} disabled{% endif %}>{{ form.solution }}</textarea></div>
+                        <div class="form-group" id="solution_screenshots_group" style="{% if form.has_solution != 'yes' %}display:none;{% endif %}"><label class="form-label">解决方案截图（可选，最多5张）</label><input type="file" name="solution_screenshots[]" class="form-input" accept="image/*" multiple><small class="text-muted">支持 JPG、PNG、GIF 格式，单个文件最大 4MB。</small></div>
+                        <div class="form-group"><div class="btn-group"><button type="submit" name="submit" class="btn">提交报错</button><a href="/" class="btn btn-secondary">返回首页</a></div></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    {{ footer_html|raw }}
+    {{ page_scripts_html|raw }}
+</body>
+</html>

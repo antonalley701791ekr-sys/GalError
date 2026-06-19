@@ -1,0 +1,153 @@
+<div id="rejectModal" class="reject-modal-overlay" style="display:none;">
+    <div class="reject-modal" role="dialog" aria-modal="true" aria-labelledby="rejectModalTitle">
+        <div class="reject-modal-header">
+            <h3 id="rejectModalTitle">{{ title|default('填写拒绝理由') }}</h3>
+            <button type="button" class="reject-modal-close" onclick="closeRejectModal()">&times;</button>
+        </div>
+        <form id="rejectForm" method="post" action="{{ action|default('') }}">
+            {{ csrf_html|default(csrf_input|default(''))|raw }}
+            <input type="hidden" name="action" id="rejectActionInput" value="reject">
+            <input type="hidden" name="id" id="rejectIdInput" value="">
+            <div class="reject-modal-body">
+                <div class="md-editor-wrap">
+                    <div class="md-mode-tabs">
+                        <button type="button" class="md-mode-tab active" data-mode="edit" onclick="switchRejectEditorMode('edit')">编写</button>
+                        <button type="button" class="md-mode-tab" data-mode="preview" onclick="switchRejectEditorMode('preview')">预览</button>
+                    </div>
+                    <div class="md-editor-toolbar" id="rejectToolbar">
+                        <button type="button" data-action="bold" title="加粗">B</button>
+                        <button type="button" data-action="italic" title="斜体">I</button>
+                        <button type="button" data-action="strikethrough" title="删除线">S</button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="ul" title="无序列表">&bull;</button>
+                        <button type="button" data-action="ol" title="有序列表">1.</button>
+                        <button type="button" data-action="quote" title="引用">&gt;</button>
+                    </div>
+                    <div class="md-editor-body mode-edit" id="rejectEditorBody">
+                        <textarea name="reject_reason" id="rejectReasonInput" class="md-editor-textarea" placeholder="请输入拒绝理由，支持 Markdown 和换行" required style="min-height:200px;"></textarea>
+                        <div id="rejectReasonPreview" class="md-editor-preview-pane markdown-body"></div>
+                    </div>
+                </div>
+                <p id="rejectReasonError" style="color:#e74c3c;font-size:0.82rem;margin-top:6px;display:none;">请填写拒绝理由</p>
+            </div>
+            <div class="reject-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">关闭</button>
+                <button type="submit" class="btn btn-danger">确认拒绝</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% if not reject_modal_initialized|default(false) %}
+<script>
+(function(){
+    function escapeHtml(text) {
+        return String(text || '').replace(/[&<>\"]/g, function(ch) {
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[ch]);
+        });
+    }
+    function inlineMarkdown(text) {
+        var out = escapeHtml(text);
+        out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        out = out.replace(/__(.+?)__/g, '<strong>$1</strong>');
+        out = out.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        out = out.replace(/_(.+?)_/g, '<em>$1</em>');
+        out = out.replace(/~~(.+?)~~/g, '<del>$1</del>');
+        return out.replace(/\n/g, '<br>');
+    }
+    function renderRejectPreview() {
+        var input = document.getElementById('rejectReasonInput');
+        var preview = document.getElementById('rejectReasonPreview');
+        if (!input || !preview) return;
+        preview.innerHTML = inlineMarkdown(input.value);
+    }
+    function wrapToolbarButtons() {
+        var toolbar = document.getElementById('rejectToolbar');
+        if (!toolbar) return;
+        Array.prototype.forEach.call(toolbar.querySelectorAll('button[data-action]'), function(btn) {
+            btn.addEventListener('click', function() {
+                var input = document.getElementById('rejectReasonInput');
+                if (!input) return;
+                var action = btn.getAttribute('data-action');
+                var start = input.selectionStart || 0;
+                var end = input.selectionEnd || 0;
+                var selected = input.value.slice(start, end) || '文本';
+                var insert = selected;
+                if (action === 'bold') insert = '**' + selected + '**';
+                else if (action === 'italic') insert = '*' + selected + '*';
+                else if (action === 'strikethrough') insert = '~~' + selected + '~~';
+                else if (action === 'ul') insert = '- ' + selected;
+                else if (action === 'ol') insert = '1. ' + selected;
+                else if (action === 'quote') insert = '> ' + selected;
+                input.setRangeText(insert, start, end, 'end');
+                input.focus();
+                renderRejectPreview();
+            });
+        });
+    }
+    function switchRejectEditorMode(mode) {
+        var body = document.getElementById('rejectEditorBody');
+        var tabs = document.querySelectorAll('#rejectModal .md-mode-tab');
+        if (!body) return;
+        body.classList.toggle('mode-preview', mode === 'preview');
+        body.classList.toggle('mode-edit', mode !== 'preview');
+        tabs.forEach(function(tab) {
+            tab.classList.toggle('active', tab.getAttribute('data-mode') === mode);
+        });
+        renderRejectPreview();
+    }
+    window.switchRejectEditorMode = switchRejectEditorMode;
+    function bindRejectModal() {
+        var modal = document.getElementById('rejectModal');
+        var input = document.getElementById('rejectReasonInput');
+        var form = document.getElementById('rejectForm');
+        if (!modal || !input || !form) return;
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                e.stopPropagation();
+            }
+        });
+        input.addEventListener('input', renderRejectPreview);
+        form.addEventListener('submit', function(e) {
+            if (!input.value.trim()) {
+                e.preventDefault();
+                var err = document.getElementById('rejectReasonError');
+                if (err) err.style.display = 'block';
+                input.focus();
+                return false;
+            }
+        });
+        wrapToolbarButtons();
+        renderRejectPreview();
+    }
+    window.openRejectModal = function(actionUrl, presetReason){
+        var modal = document.getElementById('rejectModal');
+        var form = document.getElementById('rejectForm');
+        var input = document.getElementById('rejectReasonInput');
+        var err = document.getElementById('rejectReasonError');
+        var actionInput = document.getElementById('rejectActionInput');
+        var idInput = document.getElementById('rejectIdInput');
+        if (!modal || !form || !input) return;
+        form.action = actionUrl || '';
+        input.value = presetReason || '';
+        if (actionInput) {
+            var actionMatch = actionUrl && actionUrl.match(/[?&]action=([^&]+)/);
+            actionInput.value = actionMatch ? actionMatch[1] : 'reject';
+        }
+        if (idInput) {
+            var idMatch = actionUrl && actionUrl.match(/[?&]id=(\d+)/);
+            idInput.value = idMatch ? idMatch[1] : '';
+        }
+        if (err) err.style.display = 'none';
+        modal.style.display = 'flex';
+        switchRejectEditorMode('edit');
+        renderRejectPreview();
+        input.focus();
+    };
+    window.closeRejectModal = function(){
+        var modal = document.getElementById('rejectModal');
+        if (modal) modal.style.display = 'none';
+    };
+    document.addEventListener('DOMContentLoaded', bindRejectModal);
+})();
+</script>
+{% endif %}

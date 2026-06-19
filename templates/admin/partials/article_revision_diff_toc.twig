@@ -1,0 +1,27 @@
+{% if oldToc or newToc %}
+    <div style="margin-bottom:12px;">
+        <strong style="color:var(--accent-purple);">目录设置变更：</strong>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+            <div>
+                <div style="font-size:0.82rem;color:#e74c3c;margin-bottom:4px;font-weight:600;">旧目录</div>
+                <ul class="toc-diff-list">
+                    {% for item in oldToc %}
+                        <li class="{{ item.visible is empty ? 'toc-diff-hidden' : '' }}">H{{ item.level }} - {{ item.text }}{{ item.visible is empty ? '(隐藏)' : '' }}</li>
+                    {% else %}
+                        <li style="color:var(--text-muted);">无</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <div style="font-size:0.82rem;color:#27ae60;margin-bottom:4px;font-weight:600;">新目录</div>
+                <ul class="toc-diff-list">
+                    {% for item in newToc %}
+                        <li class="{{ item.visible is empty ? 'toc-diff-hidden' : '' }}">H{{ item.level }} - {{ item.text }}{{ item.visible is empty ? '(隐藏)' : '' }}</li>
+                    {% else %}
+                        <li style="color:var(--text-muted);">无</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}

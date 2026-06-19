@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统通知 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container" style="max-width:800px;">
+            <div class="mb-20" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <h2>系统通知</h2>
+                {% if total > 0 %}
+                    <a href="?read_all=1" class="btn btn-secondary btn-sm">全部标记已读</a>
+                {% endif %}
+            </div>
+
+            {% if messages is not empty %}
+                {% for msg in messages %}
+                    <div class="card" style="margin-bottom:12px;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;{% if not msg.is_read %}border-left:3px solid var(--accent-purple);{% endif %}{% if msg.target_href %}cursor:pointer;{% endif %}"{% if msg.target_href %} onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='var(--shadow-card-hover)';" onmouseleave="this.style.transform='';this.style.boxShadow='';" onclick="window.location.href='{{ msg.target_href|e('html_attr') }}'" role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='{{ msg.target_href|e('html_attr') }}';}"{% endif %}>
+                        <div class="card-body" style="padding:16px 20px;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                                <div style="flex:1;">
+                                    <h4 style="font-size:0.95rem;color:var(--text-primary);margin-bottom:6px;">
+                                        {% if not msg.is_read %}
+                                            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent-purple);margin-right:6px;"></span>
+                                        {% endif %}
+                                        {{ msg.title }}
+                                    </h4>
+                                    <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;">
+                                        {{ msg.content }}
+                                    </p>
+                                    <span style="font-size:0.78rem;color:var(--text-muted);">{{ msg.created_text }}</span>
+                                </div>
+                                {% if not msg.is_read %}
+                                    <a href="?read={{ msg.id }}" class="btn btn-secondary btn-sm" onclick="event.stopPropagation();">标记已读</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if pagination.totalPages > 1 %}
+                    <div class="pagination">
+                        {% if pagination.hasPrev %}
+                            <a href="?page={{ pagination.page - 1 }}">上一页</a>
+                        {% endif %}
+                        {% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}
+                            {% if i == pagination.page %}
+                                <span class="current">{{ i }}</span>
+                            {% else %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.hasNext %}
+                            <a href="?page={{ pagination.page + 1 }}">下一页</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center empty-state">
+                        <p>暂无系统通知</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+</body>
+</html>

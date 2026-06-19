@@ -1,0 +1,27 @@
+{#
+  error_detail_comments.twig —— 报错详情页「评论区」容器
+  输入（由 error_detail.twig 显式 with 传入）：
+    comments           [必填] 评论数组；未定义则整段不渲染（下方 is defined 守卫）
+    comment_count      [必填] 评论总数 int —— 隐式继承给 _comment_header
+    comment_pagination [必填] 分页对象 {page,totalPages,hasPrev,hasNext} —— 隐式继承给 _comment_pagination
+    error_id           [必填] 当前报错 ID —— 隐式继承给 _comment_pagination 拼分页链接
+    request_uri        [必填] 当前 URL —— 隐式继承给 _comment_header 登录回跳
+    is_logged_in       [必填] 是否登录 —— 隐式继承给 _comment_header
+  注意：子 partial（header/pagination）未显式传参，靠上下文隐式继承上述变量；
+        任一缺失会导致对应子块静默不渲染或报错。改 error_detail.twig 的 with 块时需同步。
+#}
+{% if comments is defined %}
+<section class="comment-section" style="margin-top:24px;">
+    {% include 'front/partials/error_detail_comment_header.twig' %}
+    <div class="comment-list" id="commentList">
+        {% if comments is not empty %}
+            {% for comment in comments %}
+                {% include 'front/partials/error_detail_comment_item.twig' with { comment: comment } %}
+            {% endfor %}
+        {% else %}
+            {% include 'front/partials/error_detail_comment_empty.twig' %}
+        {% endif %}
+    </div>
+    {% include 'front/partials/error_detail_comment_pagination.twig' %}
+</section>
+{% endif %}

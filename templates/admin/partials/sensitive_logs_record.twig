@@ -1,0 +1,60 @@
+<div style="border:1px solid var(--glass-border);border-radius:12px;padding:16px;background:var(--glass-bg);">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+        <div>
+            <div style="font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span>命中词：{{ record.matched_word ?: '未知' }}</span>
+                {% if isSuperAdmin() %}
+                    {% set isWordWhitelisted = record.matched_word|lower in whitelistWords %}
+                    {% if not isWordWhitelisted and record.matched_word != '' %}
+                        <button type="submit" name="add_hit_word_whitelist" value="1" class="btn btn-secondary btn-sm js-add-hit-word" data-hit-word="{{ record.matched_word }}">加入敏感词白名单</button>
+                    {% else %}
+                        <span class="text-muted" style="font-size:12px;">已在敏感词白名单</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="text-muted" style="font-size:13px;margin-top:6px;">
+                {{ record.time ?: '-' }} · {{ record.method ?: '-' }} · 用户：{{ record.hit_username ?: '游客' }}
+            </div>
+        </div>
+        <div class="text-muted" style="font-size:13px;word-break:break-all;max-width:520px;">
+            场景：{{ record.scene ?: '未知场景' }}<br>
+            页面：{{ record.page ?: '-' }}
+        </div>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px;">提取到的域名</div>
+            {% if record.domains %}
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    {% for domain in record.domains %}
+                        <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--glass-bg);border:1px solid var(--glass-border);font-size:13px;word-break:break-all;">
+                            {% if hasPermission('sensitive_logs', 'add') and domain in record.non_whitelisted_domains %}
+                                <input type="checkbox" name="selected_domains[]" value="{{ domain }}">
+                            {% endif %}
+                            <span>{{ domain }}</span>
+                            {% if domain in whitelistDomains %}
+                                <span class="text-muted">已在白名单</span>
+                            {% endif %}
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-muted" style="font-size:13px;">无</div>
+            {% endif %}
+        </div>
+        <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px;">非白名单域名</div>
+            <div class="text-muted" style="font-size:13px;word-break:break-all;">
+                {{ record.non_whitelisted_domains ? record.non_whitelisted_domains|join(', ') : '无' }}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">文本预览</div>
+        <div style="white-space:pre-wrap;word-break:break-word;line-height:1.7;background:rgba(0,0,0,0.12);border-radius:10px;padding:12px;font-size:14px;">
+            {{ record.text_preview ?: '' }}
+        </div>
+    </div>
+</div>

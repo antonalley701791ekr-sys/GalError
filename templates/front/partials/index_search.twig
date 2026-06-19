@@ -1,0 +1,28 @@
+<section class="search-box">
+    <div class="container">
+        <form class="search-form search-form-tabbed" method="get" action="/search">
+            <div class="search-tabs">
+                <label class="search-tab"><input type="radio" name="type" value="article" checked><span>文章</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="game"><span>游戏</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="error"><span>报错内容</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="discussion"><span>话题</span></label>
+            </div>
+            <div class="search-input-row">
+                <input type="text" name="q" class="search-input" placeholder="搜索游戏名、报错内容、VNDB编号..." required>
+                <select name="category" class="form-select search-category-select" data-error-filter="1" style="display:none;" disabled>
+                    <option value="">所有分类</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="system_category" class="form-select search-system-category-select" data-error-filter="1" style="display:none;" disabled>
+                    <option value="">所有系统</option>
+                    {% for scKey, scLabel in system_category_options %}
+                        <option value="{{ scKey }}">{{ scLabel }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="search-btn">搜索</button>
+            </div>
+        </form>
+    </div>
+</section>

@@ -1,0 +1,5 @@
+{% set content_html %}{% include 'admin/partials/article_review_page.twig' %}{% endset %}
+{% set extra_scripts_html %}
+    {% include 'admin/partials/reject_modal.twig' with { title: '填写驳回原因', action: '', csrf_html: csrf_input('admin_form') } %}
+{% endset %}
+{% include 'admin/layout.twig' %}

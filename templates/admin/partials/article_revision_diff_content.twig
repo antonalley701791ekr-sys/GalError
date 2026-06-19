@@ -1,0 +1,29 @@
+{% if oldContent != newContent %}
+    <div style="margin-bottom:12px;"><strong style="color:var(--accent-purple);">内容变更：</strong></div>
+    <div class="article-diff-container">
+        <div class="article-diff-panel diff-panel-old">
+            <div class="diff-panel-header">旧版本</div>
+            <div class="markdown-body">
+                {% if oldContent|length > 12000 %}
+                    {{ oldContent|slice(0, 12000)|raw }}
+                    <div class="text-muted" style="margin-top:8px;">内容过长，已截断显示前 12000 个字符</div>
+                {% else %}
+                    {{ oldContent|raw }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="article-diff-panel diff-panel-new">
+            <div class="diff-panel-header">新版本</div>
+            <div class="markdown-body">
+                {% if newContent|length > 12000 %}
+                    {{ newContent|slice(0, 12000)|raw }}
+                    <div class="text-muted" style="margin-top:8px;">内容过长，已截断显示前 12000 个字符</div>
+                {% else %}
+                    {{ newContent|raw }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <p class="text-muted">文章内容无变化</p>
+{% endif %}

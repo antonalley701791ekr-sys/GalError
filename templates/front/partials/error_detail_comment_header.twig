@@ -1,0 +1,15 @@
+{#
+  error_detail_comment_header.twig —— 评论区标题栏（计数 + 发表/登录按钮）
+  输入（隐式继承自 error_detail_comments / error_detail.twig）：
+    comment_count  [必填] 评论总数 int
+    is_logged_in   [必填] 是否登录；true 显示「发表评论」按钮，false 显示「登录后评论」
+    request_uri    [必填] 当前 URL，用于未登录时拼登录回跳 ?redirect=
+#}
+<div class="comment-section-header">
+    <h3>评论区（<span id="commentCount">{{ comment_count }}</span> 条）</h3>
+    {% if is_logged_in %}
+        <button class="btn btn-sm" onclick="openCommentModal()">发表评论</button>
+    {% else %}
+        <a href="/login?redirect={{ request_uri|url_encode }}" class="btn btn-sm">登录后评论</a>
+    {% endif %}
+</div>

@@ -1,0 +1,6 @@
+<div class="btn-group" style="margin-bottom:16px;">
+    <a href="solutions.php" class="btn {{ not status and errorId == 0 ? 'btn-success' : 'btn-secondary' }}">全部</a>
+    <a href="solutions.php?status=pending" class="btn {{ status == 'pending' ? 'btn-success' : 'btn-secondary' }}">待审核</a>
+    <a href="solutions.php?status=approved" class="btn {{ status == 'approved' ? 'btn-success' : 'btn-secondary' }}">已通过</a>
+    <a href="solutions.php?status=rejected" class="btn {{ status == 'rejected' ? 'btn-success' : 'btn-secondary' }}">已拒绝</a>
+</div>

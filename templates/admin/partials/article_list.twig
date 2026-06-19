@@ -1,0 +1,75 @@
+{% include 'admin/partials/page_header_actions.twig' with {
+    title: '文章管理',
+    actions: []
+} %}
+
+{% include 'admin/partials/list_filters.twig' with {
+    filters: [
+        {'href': 'article_review.php', 'label': '全部', 'active': not status and action != 'revisions'},
+        {'href': '?status=pending', 'label': '待审核', 'active': status == 'pending', 'badge': articleStats.pending},
+        {'href': '?status=approved', 'label': '已通过', 'active': status == 'approved'},
+        {'href': '?status=rejected', 'label': '已驳回', 'active': status == 'rejected'},
+        {'href': '?action=revisions', 'label': '文章修改', 'active': action == 'revisions', 'badge': pendingRevisions}
+    ]
+} %}
+
+<div class="admin-stats-grid">
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--cyan">{{ articleStats.total }}</h3><p class="stat-label">总数</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--yellow">{{ articleStats.pending }}</h3><p class="stat-label">待审核</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--green">{{ articleStats.approved }}</h3><p class="stat-label">已通过</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--red">{{ articleStats.rejected }}</h3><p class="stat-label">已驳回</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--yellow">{{ pendingRevisions }}</h3><p class="stat-label">待审核修改</p></div></div>
+</div>
+
+<div class="card">
+    <div class="card-header">文章列表<span class="text-muted" style="float:right;font-weight:normal;">共 {{ total }} 条记录</span></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>ID</th><th>标题</th><th>作者</th><th>标签</th><th>状态</th><th>提交时间</th><th>操作</th></tr></thead>
+                <tbody>
+                {% if articles is empty %}
+                    <tr><td colspan="7" class="text-center text-muted" style="padding:40px;">暂无数据</td></tr>
+                {% endif %}
+                {% for art in articles %}
+                    <tr>
+                        <td>{{ art.id }}</td>
+                        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            <a href="/article.php?id={{ art.id }}&from_admin=1" style="color:inherit;text-decoration:none;">{{ art.title }}</a>
+                            {% if art.has_pending_revision %}<span class="status status-pending" style="font-size:0.65rem;margin-left:4px;">有修改</span>{% endif %}
+                        </td>
+                        <td>{{ art.username }}</td>
+                        <td>
+                            {% for tag in art.tags|default('')|split(',')|map(t => t|trim)|slice(0, 3) %}
+                                {% if tag %}<span class="status status-enabled" style="font-size:0.7rem;">{{ tag }}</span>{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td><span class="status status-{{ art.status }}">{{ art.status == 'pending' ? '待审核' : (art.status == 'approved' ? '已通过' : '已驳回') }}</span></td>
+                        <td>{{ art.created_at|date('Y-m-d H:i') }}</td>
+                        <td>
+                            {% include 'admin/partials/review_actions.twig' with {
+                                canApprove: art.status == 'pending',
+                                approveAction: '?action=approve_article&id=' ~ art.id,
+                                approveId: art.id,
+                                approveLabel: '通过',
+                                approveConfirm: '确认通过？',
+                                canReject: art.status == 'pending',
+                                rejectAction: '?action=reject_article&id=' ~ art.id,
+                                rejectId: art.id,
+                                rejectLabel: '驳回',
+                                rejectConfirm: '确认驳回？',
+                                rejectPrompt: '请输入驳回理由，支持 Markdown 和换行'
+                            } %}
+                            <form method="post" action="/admin/article_review.php?id={{ art.id }}" style="display:inline;">
+                                {{ csrf_input('admin_form')|raw }}
+                                <input type="hidden" name="action" value="delete_article">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除？');">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

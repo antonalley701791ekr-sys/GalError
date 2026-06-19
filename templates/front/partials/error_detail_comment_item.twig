@@ -1,0 +1,46 @@
+{#
+  error_detail_comment_item.twig —— 单条评论
+  输入（由 error_detail_comments 以 with { comment: comment } 显式传入）：
+    comment [必填] 评论对象，需含字段：
+      id, content, content_html(raw), username, user_id, avatar_url, created_at,
+      parent_id, parent_username, parent_user_id, parent_content_excerpt, reply_quote_url,
+      can_reply, can_edit, can_delete（布尔，由 PHP 端按权限预先算好）
+  说明：删除/编辑/回复按钮的 data-comment-id 与 class 名须与 comment 脚本约定一致（见 docs/评论系统梳理.md）。
+#}
+<div class="comment-item" id="comment-{{ comment.id }}" data-comment-content="{{ comment.content|e('html_attr') }}">
+    <div class="comment-author">
+        <span class="comment-author-info">
+            {% if comment.avatar_url %}
+                <img src="{{ comment.avatar_url }}" class="comment-author-avatar" alt="">
+            {% else %}
+                <span class="comment-author-avatar fallback">{{ comment.username|slice(0, 1) }}</span>
+            {% endif %}
+            <strong><a href="/profile?user_id={{ comment.user_id }}" class="comment-user-link">{{ comment.username }}</a></strong>
+            {% if comment.parent_id and comment.parent_username %}
+                <span class="comment-reply-to">回复 <a href="/profile?user_id={{ comment.parent_user_id }}" class="comment-user-link">{{ comment.parent_username }}</a></span>
+            {% endif %}
+        </span>
+        <span class="comment-meta-right">
+            <span class="comment-time">{{ comment.created_at }}</span>
+            {% if comment.can_reply %}
+                <button class="comment-reply-btn" data-comment-id="{{ comment.id }}" data-comment-username="{{ comment.username }}">回复</button>
+            {% endif %}
+            {% if comment.can_edit %}
+                <button class="comment-reply-btn comment-edit-btn" data-comment-id="{{ comment.id }}">编辑</button>
+            {% endif %}
+            {% if comment.can_delete %}
+                <button class="comment-delete-btn" data-comment-id="{{ comment.id }}" title="删除评论">删除</button>
+            {% endif %}
+        </span>
+    </div>
+    <div class="comment-body markdown-body">
+        {% if comment.parent_id and comment.parent_username %}
+            <div class="comment-reply-context">
+                <div class="comment-reply-header">回复 <span class="comment-user-link">@{{ comment.parent_username }}</span></div>
+                <a href="{{ comment.reply_quote_url }}" class="comment-reply-quote">{{ comment.parent_content_excerpt }}</a>
+                <div class="comment-reply-divider"></div>
+            </div>
+        {% endif %}
+        <div class="comment-main-content">{{ comment.content_html|raw }}</div>
+    </div>
+</div>

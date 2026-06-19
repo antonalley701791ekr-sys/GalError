@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ error.title }} - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _user_css_ver }}">
+    <link rel="stylesheet" href="/assets/css/markdown-editor.css?v={{ _markdown_editor_css_ver }}">
+    {{ inline_style_html|raw }}
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    {% if from_admin %}
+    <div class="admin-layout">
+        {{ admin_sidebar_html|raw }}
+        <div class="admin-content">
+            <main class="admin-main">
+    {% else %}
+    <main class="main">
+    {% endif %}
+        <div class="container" style="max-width: 900px;">
+            {% include 'front/partials/error_detail_breadcrumb.twig' %}
+            {% include 'front/partials/error_detail_summary.twig' %}
+            {% include 'front/partials/error_detail_sections.twig' %}
+            {% include 'front/partials/error_detail_revisions.twig' %}
+            {% include 'front/partials/error_detail_actions.twig' %}
+            {% include 'front/partials/error_detail_related.twig' %}
+            {% include 'front/partials/error_detail_comments.twig' with {
+                comments: comments,
+                comment_count: comment_count,
+                comment_pagination: comment_pagination,
+                error_id: comment_error_id,
+                request_uri: comment_request_uri,
+                is_logged_in: comment_is_logged_in
+            } %}
+        </div>
+    {% if from_admin %}
+            </main>
+        </div>
+    </div>
+    {{ admin_footer_scripts_html|raw }}
+    {% else %}
+    </main>
+    {% endif %}
+
+    {% include 'partials/comment_modal.twig' %}
+    {% if not from_admin %}
+    {{ footer_html|raw }}
+    {% endif %}
+    {{ page_scripts_html|raw }}
+    <script src="/assets/js/user-card.js?v={{ _user_card_js_ver }}"></script>
+</body>
+</html>

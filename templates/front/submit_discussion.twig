@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/markdown-editor.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+    {{ inline_style_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container" style="max-width: 900px;">
+            <div class="card">
+                <div class="card-header">{{ page_title }}</div>
+                <div class="card-body">
+                    {% if message %}
+                        <div class="alert-{{ message_type }}">{{ message }}</div>
+                    {% endif %}
+
+                    <form method="post" id="discussionForm">
+                        {{ csrf_html|raw }}
+                        <div class="form-group">
+                            <label class="form-label">话题标题 <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-input" placeholder="请输入话题标题" value="{{ form_title }}" required maxlength="200">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">话题内容 <span class="text-danger">*</span></label>
+                            <div class="md-editor-wrap">
+                                <div class="md-mode-tabs">
+                                    <button type="button" class="md-mode-tab active" data-mode="edit">编写</button>
+                                    <button type="button" class="md-mode-tab" data-mode="preview">预览</button>
+                                    <button type="button" class="md-mode-tab" data-mode="split">分栏</button>
+                                </div>
+                                <div class="md-editor-toolbar">
+                                    <button type="button" data-action="h1" title="一级标题">H1</button>
+                                    <button type="button" data-action="h2" title="二级标题">H2</button>
+                                    <button type="button" data-action="h3" title="三级标题">H3</button>
+                                    <span class="md-toolbar-separator"></span>
+                                    <button type="button" data-action="bold" title="加粗"><b>B</b></button>
+                                    <button type="button" data-action="italic" title="斜体"><i>I</i></button>
+                                    <button type="button" data-action="strikethrough" title="删除线"><s>S</s></button>
+                                    <span class="md-toolbar-separator"></span>
+                                    <button type="button" data-action="link" title="链接">&#128279;</button>
+                                    <button type="button" data-action="mention" title="提及用户">@用户</button>
+                                    <button type="button" data-action="image" title="插入图片">&#128247; 图片</button>
+                                    <span class="md-toolbar-separator"></span>
+                                    <button type="button" data-action="code" title="行内代码">`</button>
+                                    <button type="button" data-action="codeblock" title="代码块">&lt;/&gt;</button>
+                                    <span class="md-toolbar-separator"></span>
+                                    <button type="button" data-action="ul" title="无序列表">&#8226; 列表</button>
+                                    <button type="button" data-action="ol" title="有序列表">1. 列表</button>
+                                    <button type="button" data-action="quote" title="引用">&gt; 引用</button>
+                                    <span class="md-toolbar-separator"></span>
+                                    <button type="button" data-action="hr" title="水平线">---</button>
+                                    <button type="button" data-action="table" title="表格">表格</button>
+                                    <button type="button" data-action="tsvtable" title="将文本快速转换为表格">文本转表</button>
+                                </div>
+                                <div class="md-editor-body mode-edit">
+                                    <textarea id="md-editor" class="md-editor-textarea" placeholder="支持 Markdown 语法，输入内容后可切换预览查看效果...">{{ form_content }}</textarea>
+                                    <div id="md-preview" class="md-editor-preview-pane"></div>
+                                </div>
+                                <div class="md-editor-hint">支持 Markdown 语法 | <kbd>Tab</kbd> 缩进 | <kbd>Shift+Tab</kbd> 取消缩进</div>
+                            </div>
+                            <input type="hidden" name="content" id="contentInput">
+                            <input type="file" id="md-image-uploader" accept="image/*" style="display:none;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">话题标签（最多5个）</label>
+                            <div class="tag-selector" id="tagSelector">
+                                {% for tag in default_tags %}
+                                    <label class="tag-chip{% if tag in form_tags %} selected{% endif %}">
+                                        <input type="checkbox" name="tags[]" value="{{ tag }}"{% if tag in form_tags %} checked{% endif %}>
+                                        {{ tag }}
+                                    </label>
+                                {% endfor %}
+                                {% for tag in extra_tags %}
+                                    <label class="tag-chip selected" data-custom-tag="1">
+                                        <input type="checkbox" name="tags[]" value="{{ tag }}" checked>
+                                        {{ tag }}
+                                    </label>
+                                {% endfor %}
+                            </div>
+                            <div class="custom-tag-input">
+                                <input type="text" id="customTagInput" name="custom_tag" class="form-input" placeholder="输入自定义标签后按回车，或点击右侧按钮添加（支持多标签同时添加，逗号分隔）" value="">
+                                <button type="button" class="btn btn-secondary" id="addCustomTagBtn">添加标签</button>
+                            </div>
+                            <div class="tag-count">已选择 <span class="count-num" id="tagCount">{{ form_tags|length }}</span>/5 个标签</div>
+                        </div>
+
+                        <div class="btn-group" style="margin-top: 24px;">
+                            <button type="submit" class="btn">{{ submit_text }}</button>
+                            <a href="{{ back_url }}" class="btn btn-secondary">{{ back_text }}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+    {{ page_scripts_html|raw }}
+</body>
+</html>

@@ -1,0 +1,8 @@
+{% include 'admin/partials/pages_header.twig' %}
+{% include 'admin/partials/pages_message.twig' %}
+
+{% if action == 'edit' and editPage %}
+    {% include 'admin/partials/pages_edit.twig' %}
+{% else %}
+    {% include 'admin/partials/pages_list.twig' %}
+{% endif %}

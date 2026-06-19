@@ -1,0 +1,10 @@
+<tr>
+    <td>{{ admin.id }}</td>
+    <td>{{ admin.username }}</td>
+    <td>{{ admin.role_label|default((admin.role == 'super' ? '超级管理员' : (admin.role == 'sub' ? '子管理员' : '普通用户'))) }}</td>
+    <td>{{ admin.masked_email|default(admin.email|default('未设置')) }}</td>
+    <td>{{ admin.email_status|raw }}</td>
+    <td>{{ admin.status_html|raw }}</td>
+    <td>{{ admin.created_at_formatted|default(admin.created_at|date('Y-m-d H:i')) }}</td>
+    <td>{{ admin.actions_html|raw }}</td>
+</tr>

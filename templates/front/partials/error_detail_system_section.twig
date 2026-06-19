@@ -1,0 +1,28 @@
+{% if error_has_system_section %}
+<div class="error-detail-section">
+    <h3>系统分类</h3>
+    <p>{{ system_category_label_html|raw }}</p>
+</div>
+{% endif %}
+{% if error_is_android_emulator and android_device_rows is not empty %}
+<div class="error-detail-section">
+    <h3>安卓模拟器设备信息</h3>
+    <p>
+        {% for row in android_device_rows %}
+            <strong>{{ row.label }}：</strong>{{ row.value }}<br>
+        {% endfor %}
+    </p>
+</div>
+{% endif %}
+{% if error_has_system_info %}
+<div class="error-detail-section">
+    <h3>系统信息</h3>
+    <p>{{ system_info_html|raw }}</p>
+</div>
+{% endif %}
+{% if error_has_patch_info %}
+<div class="error-detail-section">
+    <h3>汉化补丁</h3>
+    <p>{{ patch_info_html|raw }}</p>
+</div>
+{% endif %}

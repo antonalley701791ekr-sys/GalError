@@ -1,0 +1,25 @@
+<div class="card settings-section">
+    <div class="card-header">前台背景图</div>
+    <div class="card-body">
+        <p class="form-hint" style="margin-bottom: 16px;">日间模式和夜间模式可分别设置不同的背景图。未设置背景图的主题将显示默认渐变背景。</p>
+        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border);">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 10px; display: block;">夜间模式背景图</label>
+            {% if settings.site_bg is defined and settings.site_bg %}<div style="margin-bottom: 12px;"><img src="/{{ settings.site_bg }}" alt="夜间模式背景图" style="max-width: 300px; max-height: 180px; border-radius: 6px; border: 1px solid var(--glass-border); object-fit: cover;"></div>{% endif %}
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="file" name="site_bg" class="form-input" accept="image/*" style="max-width: 400px;">
+                <p class="form-hint" style="margin: 6px 0 0;">支持 JPG/PNG/WebP 等图片格式，单张图片大小不超过 4MB。上传前请确认图片不超过 4MB。</p>
+                {% if settings.site_bg is defined and settings.site_bg %}<label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 4px;"><input type="checkbox" name="delete_bg" value="1"> <span class="text-muted" style="font-size: 13px;">删除</span></label>{% endif %}
+            </div>
+        </div>
+        <div>
+            <label class="form-label" style="font-weight: 600; margin-bottom: 10px; display: block;">日间模式背景图</label>
+            {% if settings.site_bg_light is defined and settings.site_bg_light %}<div style="margin-bottom: 12px;"><img src="/{{ settings.site_bg_light }}" alt="日间模式背景图" style="max-width: 300px; max-height: 180px; border-radius: 6px; border: 1px solid var(--glass-border); object-fit: cover;"></div>{% endif %}
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="file" name="site_bg_light" class="form-input" accept="image/*" style="max-width: 400px;">
+                <p class="form-hint" style="margin: 6px 0 0;">支持 JPG/PNG/WebP 等图片格式，单张图片大小不超过 4MB。上传前请确认图片不超过 4MB。</p>
+                {% if settings.site_bg_light is defined and settings.site_bg_light %}<label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 4px;"><input type="checkbox" name="delete_bg_light" value="1"> <span class="text-muted" style="font-size: 13px;">删除</span></label>{% endif %}
+            </div>
+        </div>
+        <p class="form-hint" style="margin-top: 12px;">支持 JPG/PNG/WebP 等图片格式，单张图片大小不超过 4MB，建议宽度 1920px 以上。背景固定不随页面滚动。</p>
+    </div>
+</div>

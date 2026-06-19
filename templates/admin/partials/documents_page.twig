@@ -1,0 +1,8 @@
+{% include 'admin/partials/documents_header.twig' %}
+{% include 'admin/partials/documents_message.twig' %}
+
+{% if action == 'add' or (action == 'edit' and editDoc) %}
+    {% include 'admin/partials/documents_edit.twig' %}
+{% else %}
+    {% include 'admin/partials/documents_list.twig' %}
+{% endif %}

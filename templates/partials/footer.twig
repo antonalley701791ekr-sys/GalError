@@ -1,0 +1,45 @@
+<footer class="footer">
+    <div class="container">
+        <div class="footer-links">
+            <a href="/page/about">关于我们</a>
+            <a href="/page/legal">版权及法律声明</a>
+            <a href="/page/entry-guide">入站须知</a>
+            {% if is_admin %}
+                <a href="/page/admin-guide">管理员须知</a>
+            {% endif %}
+        </div>
+        <p class="footer-copyright">&copy; {{ year }} {{ site_name }}</p>
+        {% if footer_text %}
+            <p class="footer-desc">{{ footer_text }}</p>
+        {% endif %}
+    </div>
+</footer>
+{{ site_footer_scripts_html|raw }}
+<div id="global-image-viewer" class="global-image-viewer-modal" role="dialog" aria-modal="true" aria-label="图片预览">
+    <div class="global-image-viewer-modal-backdrop"></div>
+    <div class="global-image-viewer-modal-panel">
+        <button type="button" class="global-image-viewer-close" aria-label="关闭预览">×</button>
+        <img src="" alt="" class="global-image-viewer-modal-image">
+        <div class="global-image-viewer-modal-hint">点击图片可关闭，滚轮缩放，关闭按钮退出</div>
+    </div>
+</div>
+<script src="/assets/js/image-viewer.js?v={{ assets_ver }}"></script>
+<script src="/assets/js/markdown-table-mobile.js?v={{ assets_ver }}-{{ markdown_table_mobile_mtime }}"></script>
+<script>
+(function() {
+    var match = document.cookie.match(/(?:^|; )clear_markdown_draft=([^;]+)/);
+    if (!match) return;
+    var draftKey = decodeURIComponent(match[1] || '');
+    if (draftKey) {
+        try {
+            localStorage.removeItem(draftKey);
+        } catch (e) {}
+    }
+    document.cookie = 'clear_markdown_draft=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+})();
+</script>
+<script src="/assets/js/user-dropdown.js?v={{ assets_ver }}"></script>
+<script src="/assets/js/user-card.js?v={{ user_card_js_ver }}"></script>
+{% if is_logged_in %}
+<script src="/assets/js/user-online-ping.js?v={{ user_online_ping_js_ver }}"></script>
+{% endif %}

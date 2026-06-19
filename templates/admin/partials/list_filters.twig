@@ -1,0 +1,10 @@
+<div class="btn-group" style="margin-bottom:20px;">
+    {% for item in filters %}
+        <a href="{{ item.href }}" class="btn {{ item.active ? 'btn-success' : 'btn-secondary' }}">
+            {{ item.label }}
+            {% if item.badge is defined and item.badge %}
+                <span style="background:#e74c3c;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px;">{{ item.badge }}</span>
+            {% endif %}
+        </a>
+    {% endfor %}
+</div>

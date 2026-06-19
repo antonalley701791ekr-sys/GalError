@@ -1,0 +1,21 @@
+{% set page_title = page_title|default('报错管理') %}
+{% set admin_css_mtime = admin_css_mtime|default('') %}
+{% set message = message|default('') %}
+{% set message_type = message_type|default('') %}
+{% set content_html %}
+    {% if action == 'revisions' %}
+        {% include 'admin/partials/errors_revisions.twig' %}
+    {% elseif action == 'view' and viewError is defined and viewError %}
+        {% include 'admin/partials/errors_detail_info.twig' %}
+    {% elseif action == 'edit' and viewError is defined and viewError %}
+        {% include 'admin/partials/errors_detail_info.twig' %}
+    {% else %}
+        {% include 'admin/partials/errors_list_header.twig' %}
+        {% include 'admin/partials/errors_list_filter.twig' %}
+        {% include 'admin/partials/errors_list_table.twig' %}
+    {% endif %}
+{% endset %}
+{% set extra_scripts_html %}
+    {% include 'admin/partials/reject_modal.twig' with { title: '填写拒绝理由', action: '', csrf_html: csrf_input('admin_form') } %}
+{% endset %}
+{% include 'admin/layout.twig' %}

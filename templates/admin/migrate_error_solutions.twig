@@ -1,0 +1,6 @@
+{% set page_title = page_title|default('解决方案迁移') %}
+{% set admin_css_mtime = admin_css_mtime|default('') %}
+{% set content_html %}
+    {% include 'admin/partials/migrate_error_solutions_page.twig' %}
+{% endset %}
+{% include 'admin/layout.twig' %}

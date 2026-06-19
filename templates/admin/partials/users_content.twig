@@ -1,0 +1,7 @@
+{% if action == 'add' %}
+    {% include 'admin/partials/users_form_add.twig' %}
+{% elseif action == 'edit' and editAdmin %}
+    {% include 'admin/partials/users_form_edit.twig' %}
+{% else %}
+    {% include 'admin/partials/users_list.twig' %}
+{% endif %}

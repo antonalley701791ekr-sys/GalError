@@ -1,0 +1,34 @@
+<article class="card article-detail-card">
+    <div class="card-body" style="padding:28px;">
+        <h1 class="article-detail-title">{{ discussion.title }}</h1>
+        <div class="article-detail-meta">
+            <span class="article-author">
+                {% if discussion.avatar and discussion.avatar is not empty %}
+                    <img src="/{{ discussion.avatar }}" class="article-author-avatar" alt="">
+                {% else %}
+                    <span class="article-author-avatar fallback">{{ discussion.username|slice(0,1) }}</span>
+                {% endif %}
+                <a href="/profile?user_id={{ discussion.user_id }}" class="detail-author-link">{{ discussion.username }}</a>
+            </span>
+            <span>{{ discussion.created_at|date('Y-m-d H:i') }}</span>
+            <span class="view-count-detail" title="浏览量">登录浏览：<span id="view-count-user">{{ viewCounts.user_views }}</span> | 访客浏览：<span id="view-count-guest">{{ viewCounts.guest_views }}</span></span>
+        </div>
+        {% if tags is not empty %}
+            <div class="article-detail-tags">
+                {% for tag in tags %}
+                    <a href="/discussions?tag={{ tag|trim|url_encode }}" class="article-tag">{{ tag|trim }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="article-detail-content markdown-body">{{ discussion.content|raw }}</div>
+        <div class="article-detail-actions">
+            {% if isUserLoggedIn() and getCurrentUserId() == discussion.user_id %}
+                <a href="/submit_discussion?edit={{ discussion.id }}" class="btn btn-secondary btn-sm">编辑话题</a>
+            {% endif %}
+            {% if isAdmin() %}
+                <button class="btn btn-danger btn-sm" onclick="deleteDiscussion({{ discussion.id }})">删除话题</button>
+            {% endif %}
+            <a href="/discussions" class="btn btn-secondary btn-sm">返回讨论区</a>
+        </div>
+    </div>
+</article>

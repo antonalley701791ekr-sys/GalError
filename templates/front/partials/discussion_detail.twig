@@ -1,0 +1,35 @@
+<article class="card article-detail-card">
+    <div class="card-body discussion-detail-card-body">
+        <div class="discussion-detail-header-row">
+            <h1 class="article-detail-title discussion-detail-title">{{ discussion.title }}</h1>
+        </div>
+        <div class="article-detail-meta">
+            <span class="article-author">
+                {% if discussion.avatar and discussion.avatar is not empty %}
+                    <img src="/{{ discussion.avatar }}" class="article-author-avatar" alt="">
+                {% else %}
+                    <span class="article-author-avatar fallback">{{ discussion.username|slice(0, 1) }}</span>
+                {% endif %}
+                <a href="/profile?user_id={{ discussion.user_id }}" class="detail-author-link">{{ discussion.username }}</a>
+            </span>
+            <span>{{ discussion.created_at|date('Y-m-d H:i') }}</span>
+            <span class="view-count-detail" title="浏览量">登录浏览：<span id="view-count-user">{{ viewCounts.user_views }}</span> | 访客浏览：<span id="view-count-guest">{{ viewCounts.guest_views }}</span></span>
+        </div>
+        {% if tags is not empty %}
+            <div class="article-detail-tags">
+                {% for tag in tags %}<a href="/discussions?tag={{ tag|url_encode }}" class="article-tag">{{ tag|trim }}</a>{% endfor %}
+            </div>
+        {% endif %}
+        <div class="article-detail-content markdown-body">{{ discussion.content_html|raw }}</div>
+        {% if canEditDiscussion or canDeleteDiscussion %}
+            <div class="btn-group discussion-detail-actions discussion-detail-actions-below" style="margin-top: 16px;">
+                {% if canEditDiscussion %}
+                    <a href="{{ discussionEditUrl }}" class="btn btn-secondary btn-sm">编辑话题</a>
+                {% endif %}
+                {% if canDeleteDiscussion %}
+                    <a href="{{ discussionDeleteUrl }}" class="btn btn-danger btn-sm" onclick="return confirm('确认删除这个话题吗？删除后无法恢复。');">删除</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</article>

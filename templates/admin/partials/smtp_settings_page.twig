@@ -1,0 +1,16 @@
+<div class="admin-page-header"><h1>邮箱设置</h1></div>
+{% if message %}<div class="admin-alert-{{ message_type }}">{{ message }}</div>{% endif %}
+<form method="post">
+    {{ csrf_input('admin_form')|raw }}
+    <input type="hidden" name="action" value="save">
+    {% include 'admin/partials/smtp_settings_driver.twig' %}
+    {% include 'admin/partials/smtp_settings_resend.twig' %}
+    {% include 'admin/partials/smtp_settings_smtp.twig' %}
+    {% include 'admin/partials/smtp_settings_sender.twig' %}
+    <div style="margin-bottom:30px;"><button type="submit" class="btn">保存设置</button></div>
+</form>
+<form method="post">
+    {{ csrf_input('admin_form')|raw }}
+    <input type="hidden" name="action" value="test">
+    {% include 'admin/partials/smtp_settings_test.twig' %}
+</form>

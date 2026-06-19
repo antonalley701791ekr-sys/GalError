@@ -1,0 +1,13 @@
+<div id="view-counter-config" data-type="error" data-id="{{ error_id }}" data-csrf="{{ csrf_token('default')|e('html_attr') }}" style="display:none;"></div>
+<script src="/assets/js/view-counter.js"></script>
+<script src="/assets/js/marked.min.js"></script>
+<script src="/assets/js/comment-collapse.js?v={{ assets_ver }}"></script>
+<script src="/assets/js/comment-interactions.js?v={{ assets_ver }}"></script>
+<script>
+window.GalCommentConfig = {
+    contentType: 'error',
+    contentId: {{ error_id }},
+    csrfToken: '{{ csrf_token('default')|e('js') }}'
+};
+</script>
+<script src="/assets/js/comment-modal.js?v={{ assets_ver }}-{{ comment_modal_mtime }}"></script>

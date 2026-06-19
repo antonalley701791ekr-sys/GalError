@@ -1,0 +1,2 @@
+{% if game.release_date %}{% include 'admin/partials/games_field_display_text.twig' with { label: '发售日', value: game.release_date } %}{% endif %}
+{% if game.platforms %}{% include 'admin/partials/games_field_display_text.twig' with { label: '平台', value: game.platforms } %}{% endif %}

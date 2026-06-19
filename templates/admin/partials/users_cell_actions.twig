@@ -1,0 +1,28 @@
+<td>
+    <div class="btn-group" style="gap:8px; flex-wrap:wrap;">
+        <a href="users.php?action=edit&id={{ admin.id }}&v={{ _admin_users_css_ver|default('1') }}" class="btn btn-secondary btn-sm">编辑</a>
+        {% if admin.enabled %}
+            <form method="post" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="ban_user">
+                <input type="hidden" name="id" value="{{ admin.id }}">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定封禁用户【{{ admin.username|e('js') }}】吗？');">封禁</button>
+            </form>
+        {% else %}
+            <form method="post" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="unban_user">
+                <input type="hidden" name="id" value="{{ admin.id }}">
+                <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirm('确定解封用户【{{ admin.username|e('js') }}】吗？');">解封</button>
+            </form>
+        {% endif %}
+        {% if admin.role == 'sub' %}
+            <form method="post" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="revoke_admin">
+                <input type="hidden" name="id" value="{{ admin.id }}">
+                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('确定撤销用户【{{ admin.username|e('js') }}】的管理员权限吗？');">撤销管理员权限</button>
+            </form>
+        {% endif %}
+    </div>
+</td>

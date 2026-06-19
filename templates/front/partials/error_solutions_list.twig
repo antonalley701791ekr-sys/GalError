@@ -1,0 +1,59 @@
+{% if errors is not empty %}
+    <div class="card-body" style="padding: 0;">
+        {% for error in errors %}
+            <a class="error-card" href="{{ error.url }}">
+                <h3 class="error-title">{{ error.title }}</h3>
+                <div class="error-meta">
+                    <span>游戏：{{ error.game_title }}</span>
+                    <span>分类：{{ error.category_name }}</span>
+                    {% if error.system_category and system_category_options[error.system_category] is defined %}
+                        <span>系统：{{ system_category_options[error.system_category] }}</span>
+                    {% endif %}
+                    <span>时间：{{ error.created_date }}</span>
+                    {% if error.system_category == 'android_emulator' %}
+                        {% if error.android_cpu %}<span>处理器：{{ error.android_cpu }}</span>{% endif %}
+                        {% if error.android_model %}<span>机型：{{ error.android_model }}</span>{% endif %}
+                        {% if error.android_version %}<span>安卓：{{ error.android_version }}</span>{% endif %}
+                    {% endif %}
+                    <span class="view-count-inline" title="浏览量">{{ error.view_count }}</span>
+                    <span class="comment-count-inline" title="评论数">{{ error.comment_count }}</span>
+                </div>
+                <div class="error-content">
+                    <div class="error-section">
+                        <h4>解决方案摘要：</h4>
+                        {% if error.solution_summary %}
+                            <p class="error-solution-summary">{{ error.solution_summary }}</p>
+                        {% else %}
+                            <p class="text-muted">暂无解决方案，等待补充</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if pagination.totalPages > 1 %}
+        <div class="pagination">
+            {% if pagination.hasPrev %}
+                <a href="?{{ query_prefix }}page={{ pagination.page - 1 }}">上一页</a>
+            {% endif %}
+            {% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}
+                {% if i == pagination.page %}
+                    <span class="current">{{ i }}</span>
+                {% else %}
+                    <a href="?{{ query_prefix }}page={{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if pagination.hasNext %}
+                <a href="?{{ query_prefix }}page={{ pagination.page + 1 }}">下一页</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card">
+        <div class="card-body text-center empty-state">
+            <p>暂无报错/解决方案</p>
+            <p class="text-muted">欢迎提交第一条记录</p>
+        </div>
+    </div>
+{% endif %}

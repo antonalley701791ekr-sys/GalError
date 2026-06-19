@@ -1,0 +1,10 @@
+{% if related_errors is not empty %}
+<section class="mb-20" style="margin-top:24px;">
+    <h2 class="card-header" style="display:flex;justify-content:space-between;align-items:center;">该游戏的其他报错<a href="{{ game_url }}" class="btn btn-secondary btn-sm" style="font-size:0.8rem;">查看全部</a></h2>
+    <div class="card-body">
+        {% for related in related_errors %}
+            {% include 'front/partials/error_detail_related_item.twig' with { related: related } only %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,62 @@
+{% include 'admin/partials/page_header_actions.twig' with {
+    title: '文章修改记录',
+    actions: [
+        {'href': '/admin/article_review.php', 'label': '返回文章列表', 'class': 'btn-secondary'}
+    ]
+} %}
+
+{% include 'admin/partials/list_filters.twig' with {
+    filters: [
+        {'href': '/admin/article_review.php?action=revisions', 'label': '全部', 'active': not revStatus},
+        {'href': '/admin/article_review.php?action=revisions&rev_status=pending', 'label': '待审核', 'active': revStatus == 'pending', 'badge': pendingRevisions},
+        {'href': '/admin/article_review.php?action=revisions&rev_status=approved', 'label': '已通过', 'active': revStatus == 'approved'},
+        {'href': '/admin/article_review.php?action=revisions&rev_status=rejected', 'label': '已驳回', 'active': revStatus == 'rejected'}
+    ]
+} %}
+
+<div class="card">
+    <div class="card-header">修改记录列表<span class="text-muted" style="float:right;font-weight:normal;">共 {{ revTotal }} 条记录</span></div>
+    <div class="card-body">
+        {% if revisionsList is empty %}
+            <div class="text-center" style="padding:40px;"><span class="text-muted">暂无修改记录</span></div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead><tr><th>ID</th><th>文章</th><th>修改者</th><th>状态</th><th>提交时间</th><th>操作</th></tr></thead>
+                    <tbody>
+                        {% for rev in revisionsList %}
+                            <tr>
+                                <td>{{ rev.id }}</td>
+                                <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ rev.article_title|default(rev.new_title)|slice(0,40) }}</td>
+                                <td>{{ rev.rev_username|default('未知') }}</td>
+                                <td><span class="status status-{{ rev.status }}">{{ rev.status == 'pending' ? '待审核' : (rev.status == 'approved' ? '已通过' : '已驳回') }}</span></td>
+                                <td>{{ rev.created_at|date('Y-m-d H:i') }}</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="/admin/article_review.php?action=view_revision&rev_id={{ rev.id }}" class="btn btn-sm">查看</a>
+                                        {% if rev.status == 'pending' %}
+                                            {% include 'admin/partials/review_actions.twig' with {
+                                                canApprove: true,
+                                                approveAction: '/admin/article_review.php?action=approve_revision&rev_id=' ~ rev.id,
+                                                approveActionName: 'approve_revision',
+                                                approveId: rev.id,
+                                                approveLabel: '通过',
+                                                approveConfirm: '确定通过此修改？',
+                                                canReject: true,
+                                                rejectAction: '/admin/article_review.php?action=reject_revision&rev_id=' ~ rev.id,
+                                                rejectId: rev.id,
+                                                rejectLabel: '驳回',
+                                                rejectConfirm: '确认驳回此修改？',
+                                                rejectReason: rev.reject_reason|default('未通过审核')
+                                            } %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>

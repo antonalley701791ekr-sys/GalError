@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-header card-header-actions">
+        <div class="card-header-left">
+            <span>用户列表</span>
+            {% if isSuperAdmin %}
+                <button id="batchVerifyBtn" class="btn btn-verify btn-sm" style="display:none;">批量验证 (<span id="selectedCount">0</span>)</button>
+            {% endif %}
+        </div>
+        <span class="text-muted" style="font-weight: normal;">共 {{ total }} 条记录{% if searchKeyword %} （搜索：{{ searchKeyword }}）{% endif %}</span>
+    </div>
+    <div class="card-body">
+        {% if userList is empty %}
+            <p class="text-muted" style="text-align: center; padding: 20px;">暂无用户数据</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table compact-mobile-list">
+                    <thead>
+                        <tr>
+                            {% if isSuperAdmin %}<th style="width:40px;"><input type="checkbox" id="selectAll" class="user-select-checkbox" title="全选/取消"></th>{% endif %}
+                            <th>ID</th><th>用户名</th><th>角色</th><th>邮箱</th><th>邮箱验证</th><th>状态</th><th>注册时间</th><th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in userList %}
+                            <tr>
+                                {% if isSuperAdmin %}
+                                    <td>{% if u.is_selectable %}<input type="checkbox" class="user-select-checkbox" value="{{ u.id }}" data-username="{{ u.username }}" data-email="{{ u.masked_email }}">{% endif %}</td>
+                                {% endif %}
+                                <td>{{ u.id }}</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        {% if u.avatar %}<img src="/{{ u.avatar }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--glass-border);" alt="">{% endif %}
+                                        <a href="/profile?user_id={{ u.id }}" style="color:var(--text-primary);text-decoration:none;"><strong>{{ u.username }}</strong></a>
+                                    </div>
+                                </td>
+                                <td>{{ u.role_label }}</td>
+                                <td style="font-size:0.85rem;">{{ u.masked_email }}</td>
+                                <td>{{ u.email_status|raw }}</td>
+                                <td>{{ u.status_html|raw }}</td>
+                                <td>{{ u.created_at_formatted }}</td>
+                                <td>{{ u.actions_html|raw }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if pagination.totalPages > 1 %}
+                <div class="pagination">{% if pagination.page > 1 %}<a href="?page=1{{ searchParams }}">第一页</a>{% endif %}{% if pagination.hasPrev %}<a href="?page={{ pagination.page - 1 }}{{ searchParams }}">上一页</a>{% endif %}{% for i in range(max(1, pagination.page - 2), min(pagination.totalPages, pagination.page + 2)) %}{% if i == pagination.page %}<span class="current">{{ i }}</span>{% else %}<a href="?page={{ i }}{{ searchParams }}">{{ i }}</a>{% endif %}{% endfor %}{% if pagination.hasNext %}<a href="?page={{ pagination.page + 1 }}{{ searchParams }}">下一页</a>{% endif %}{% if pagination.page < pagination.totalPages %}<a href="?page={{ pagination.totalPages }}{{ searchParams }}">最后一页</a>{% endif %}</div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

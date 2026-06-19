@@ -1,0 +1,15 @@
+<div class="revision-item">
+    <div class="revision-meta">
+        <span>修改者：{{ revision.submitter_name|default('匿名用户') }}</span>
+        <span>时间：{{ revision.created_at }}</span>
+        {% if revision.review_status_label is defined %}
+            <span>{{ revision.review_status_label }}</span>
+        {% endif %}
+    </div>
+
+    {% for diff in revision.diffs %}
+        {% include 'front/partials/error_detail_revision_diff.twig' with { diff: diff } only %}
+    {% endfor %}
+
+    {% include 'front/partials/error_detail_revision_images.twig' with { revision: revision } only %}
+</div>

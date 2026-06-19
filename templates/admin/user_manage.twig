@@ -1,0 +1,6 @@
+{% set content_html %}{% include 'admin/partials/user_manage_page.twig' %}{% endset %}
+{% set extra_scripts_html %}
+<script>window.USER_MANAGE_CSRF = '{{ csrf_token('admin_form') }}';</script>
+<script src="/assets/js/user-manage.js?v={{ user_manage_js_mtime }}"></script>
+{% endset %}
+{% include 'admin/layout.twig' %}

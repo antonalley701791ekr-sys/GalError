@@ -1,0 +1,1 @@
+{% include 'admin/partials/revision_diff_fields.twig' with { oldData: rev.old_data|json_decode, newData: rev.new_data|json_decode, fieldLabels: { 'title': '报错标题', 'phenomenon': '问题描述', 'system_category': '系统分类', 'system_info': '系统信息', 'android_cpu': '手机处理器', 'android_model': '手机机型', 'android_version': '安卓版本', 'patch_info': '汉化补丁', 'solution': '解决方案' } } %}

@@ -1,0 +1,17 @@
+{% if diff.mode == 'added' %}
+    <div class="revision-diff">
+        <strong>{{ diff.label }}：</strong>
+        <div class="diff-added">{{ diff.new_html|raw }}</div>
+    </div>
+{% elseif diff.mode == 'removed' %}
+    <div class="revision-diff">
+        <strong>{{ diff.label }}：</strong>
+        <div class="diff-removed">{{ diff.old_html|raw }}</div>
+    </div>
+{% else %}
+    <div class="revision-diff">
+        <strong>{{ diff.label }}：</strong>
+        <div class="diff-removed">{{ diff.old_html|raw }}</div>
+        <div class="diff-added">{{ diff.new_html|raw }}</div>
+    </div>
+{% endif %}

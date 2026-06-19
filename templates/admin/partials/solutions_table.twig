@@ -1,0 +1,7 @@
+<div class="card"><div class="card-header">解决方案列表</div><div class="card-body">
+    <div class="table-responsive"><table class="table"><thead><tr><th>报错</th><th>游戏</th><th>作者</th><th>方案几</th><th>状态</th><th>主方案</th><th>时间</th><th>操作</th></tr></thead><tbody>
+    {% for row in solutions %}
+        {% include 'admin/partials/solutions_row_meta.twig' with { row: row, solutionNumberMap: solutionNumberMap } %}
+    {% endfor %}
+    </tbody></table></div>
+</div></div>

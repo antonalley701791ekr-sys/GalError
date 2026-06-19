@@ -1,0 +1,8 @@
+{% include 'admin/partials/ads_header.twig' %}
+{% include 'admin/partials/ads_message.twig' %}
+
+{% if action == 'add' or (action == 'edit' and editAd) %}
+    {% include 'admin/partials/ads_form.twig' %}
+{% else %}
+    {% include 'admin/partials/ads_list.twig' %}
+{% endif %}

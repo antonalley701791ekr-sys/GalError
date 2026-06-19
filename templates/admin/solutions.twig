@@ -1,0 +1,11 @@
+{% set page_title = page_title|default('解决方案管理') %}
+{% set admin_css_mtime = admin_css_mtime|default('') %}
+{% set message = message|default('') %}
+{% set message_type = message_type|default('') %}
+{% set content_html %}
+    {% include 'admin/partials/solutions_page.twig' %}
+{% endset %}
+{% set extra_scripts_html %}
+    {% include 'admin/partials/reject_modal.twig' with { title: '填写驳回理由', action: '', csrf_html: csrf_input('admin_form') } %}
+{% endset %}
+{% include 'admin/layout.twig' %}

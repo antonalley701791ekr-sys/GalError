@@ -1,0 +1,7 @@
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-header">提交信息</div>
+    <div class="card-body">
+        {% include 'admin/partials/games_field_display_text.twig' with { label: '提交者', value: game.submitter_name|default('匿名用户') } %}
+        {% include 'admin/partials/games_field_display_text.twig' with { label: '提交时间', value: game.created_at|default('') } %}
+    </div>
+</div>

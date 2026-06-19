@@ -1,0 +1,17 @@
+<div class="article-breadcrumb-row mb-20">
+    {% if from_admin %}
+        <span>
+            <a href="/admin/index.php">控制台</a> &gt;
+            <a href="/admin/errors.php">报错管理</a> &gt;
+            <span style="color:var(--text-secondary);">{{ error.title_short }}</span>
+        </span>
+        <a href="/admin/errors.php" class="btn btn-secondary btn-sm">返回列表</a>
+    {% else %}
+        <span>
+            <a href="/">首页</a> &gt;
+            <a href="{{ error.game_url }}">{{ error.game_title_short }}</a> &gt;
+            <span style="color:var(--text-secondary);">{{ error.title_short }}</span>
+        </span>
+        <a href="{{ error.game_url }}" class="btn btn-secondary btn-sm">返回游戏页</a>
+    {% endif %}
+</div>

@@ -1,0 +1,28 @@
+{% if recent_articles is not empty %}
+<section class="mb-20">
+    <h2 class="card-header" style="display:flex;justify-content:space-between;align-items:center;">相关文章<a href="/articles" class="btn btn-secondary btn-sm" style="font-size:0.8rem;">更多</a></h2>
+    <div class="card-body">
+        <div class="article-list article-list-grid">
+            {% for art in recent_articles %}
+                <a class="article-card" href="{{ art.url }}">
+                    <h3 class="article-list-title">{{ art.title_short }}</h3>
+                    <div class="article-list-meta">
+                        <span class="article-author-inline">{{ art.username }}</span>
+                        <span>{{ art.created_date }}</span>
+                        <span class="view-count-inline" title="浏览量">{{ art.view_count }}</span>
+                        <span class="comment-count-inline" title="评论数">{{ art.comment_count }}</span>
+                    </div>
+                    {% if art.tags is not empty %}
+                        <div class="article-list-tags">
+                            {% for t in art.tags %}
+                                <span class="article-tag-sm">{{ t }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="article-list-summary">{{ art.summary }}...</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,14 @@
+<div class="mb-20" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div>
+        <h2>报错/解决方案列表</h2>
+        <p class="text-muted" style="margin-top:4px;font-size:0.85rem;">共 {{ total }} 条记录</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/" class="btn btn-secondary">返回首页</a>
+        {% if _is_login %}
+            <a href="/submit" class="btn">提交报错/解决方案</a>
+        {% else %}
+            <a href="/login?redirect=%2Fsubmit" class="btn">提交报错/解决方案</a>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;">
+    <div style="flex-shrink:0;">
+        {% include 'admin/partials/games_info_panel_cover.twig' with { game: game } %}
+    </div>
+    <div style="flex:1;min-width:300px;">
+        {% include 'admin/partials/games_info_panel_meta.twig' with { game: game, show_vndb: show_vndb|default(true) } %}
+        {% if show_meta|default(true) %}
+            {% include 'admin/partials/games_field_group_submitter.twig' with { game: game } %}
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="admin-page-header">
+    <h1>{{ title }}</h1>
+    {% if actions is defined %}
+        <div class="btn-group">
+            {% for actionItem in actions %}
+                <a href="{{ actionItem.href }}" class="btn {{ actionItem.class|default('btn-secondary') }}">{{ actionItem.label }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

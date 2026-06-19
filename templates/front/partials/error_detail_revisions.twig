@@ -1,0 +1,10 @@
+{% if revisions is not empty %}
+<div class="error-detail-section" style="margin-top:24px;">
+    <h3>修改记录</h3>
+    <div class="revision-history" style="margin-top:8px;">
+        {% for revision in revisions %}
+            {% include 'front/partials/error_detail_revision_item.twig' %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

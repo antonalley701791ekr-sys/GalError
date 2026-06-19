@@ -1,0 +1,14 @@
+<div class="error-subsection" style="margin-top: 14px;">
+    <h4 style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <span>方案 {{ solution.label }}</span>
+        <a class="btn btn-secondary btn-sm" href="/solution_submit.php?error_id={{ error.id }}&solution_id={{ solution.id }}">编辑此方案</a>
+    </h4>
+    {% if solution.author_name %}
+        <div class="text-muted" style="margin:0 0 8px;">提交者：<a class="js-user-card" data-user-id="{{ solution.user_id }}" data-username="{{ solution.author_name }}" href="/profile?user_id={{ solution.user_id }}">{{ solution.author_name }}</a>{% if solution.created_at %} · 提交于 {{ solution.created_at }}{% endif %}</div>
+    {% endif %}
+    {% if solution.revision_author_name %}
+        <div class="text-muted" style="margin:0 0 8px;">最新修改者：<a class="js-user-card" data-user-id="{{ solution.revision_user_id }}" data-username="{{ solution.revision_author_name }}" href="/profile?user_id={{ solution.revision_user_id }}">{{ solution.revision_author_name }}</a>{% if solution.revision_created_at %} · 最新修改时间：{{ solution.revision_created_at }}{% endif %}</div>
+    {% endif %}
+    <div class="error-detail-text">{{ solution.content_html|raw }}</div>
+    {% include 'front/partials/error_detail_screenshot_list.twig' with { title: '解决方案截图', alt_text: '解决方案截图', screenshot_urls: solution.screenshot_urls } only %}
+</div>

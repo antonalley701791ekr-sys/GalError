@@ -1,0 +1,10 @@
+{% if screenshot_urls is not empty %}
+    <div class="error-subsection">
+        <h4>{{ title }}</h4>
+        <div class="screenshot-list">
+            {% for screenshot in screenshot_urls %}
+                <img src="{{ screenshot.url }}" alt="{{ alt_text }}" class="screenshot-thumb js-image-viewer-trigger" data-viewer-src="{{ screenshot.url }}" data-viewer-alt="{{ alt_text }}">
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

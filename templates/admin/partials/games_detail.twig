@@ -1,0 +1,32 @@
+<div class="card">
+    <div class="card-header">游戏详情</div>
+    <div class="card-body">
+        {% include 'admin/partials/games_info_panel_cover.twig' with { game: game } %}
+        {% include 'admin/partials/games_info_panel_meta.twig' with { game: game, show_vndb: true } %}
+        {% include 'admin/partials/games_field_group_submitter.twig' with { game: game } %}
+
+        <div class="btn-group">
+            {% include 'admin/partials/review_actions.twig' with {
+                canApprove: game.status == 'pending',
+                approveAction: '/admin/games.php?id=' ~ game.id,
+                approveActionName: 'approve',
+                approveId: game.id,
+                approveLabel: '通过审核',
+                approveConfirm: '确认通过该游戏？',
+                canReject: game.status == 'pending',
+                rejectAction: '/admin/games.php?action=reject&id=' ~ game.id,
+                rejectId: game.id,
+                rejectLabel: '拒绝',
+                rejectConfirm: '确认拒绝该游戏？',
+                rejectReason: '未通过审核'
+            } %}
+            <a href="/submit_game.php?edit_id={{ game.id }}&from_admin=1" class="btn btn-secondary">编辑</a>
+            <form method="post" action="/admin/games.php?id={{ game.id }}" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('确认删除该游戏？');">删除</button>
+            </form>
+            <a href="games.php" class="btn btn-secondary">返回列表</a>
+        </div>
+    </div>
+</div>

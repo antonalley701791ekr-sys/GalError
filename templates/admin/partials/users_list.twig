@@ -1,0 +1,6 @@
+<div class="card">
+    <div class="card-header">管理员列表<span class="text-muted" style="float:right;font-weight:normal;">共 {{ admins|length }} 个管理员</span></div>
+    <div class="card-body">
+        {% include 'admin/partials/users_table.twig' %}
+    </div>
+</div>

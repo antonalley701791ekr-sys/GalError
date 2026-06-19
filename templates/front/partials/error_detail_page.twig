@@ -1,0 +1,25 @@
+<article class="card article-detail-card">
+    <div class="card-body" style="padding:28px;">
+        <h1 class="article-detail-title">{{ error.title }}</h1>
+
+        <div class="article-detail-meta">
+            {% if error.submitter_name %}
+                <span class="article-author js-user-card" data-user-id="{{ error.user_id }}" data-username="{{ error.submitter_name }}">
+                    <a href="/profile?user_id={{ error.user_id }}" class="detail-author-link">{{ error.submitter_name }}</a>
+                </span>
+            {% endif %}
+            {% if error.solution_author_name and error.solution_user_id and error.solution_user_id != error.user_id %}
+                <span class="text-muted">解决方案作者：<a href="/profile?user_id={{ error.solution_user_id }}" class="detail-author-link">{{ error.solution_author_name }}</a></span>
+            {% endif %}
+            <span><a href="{{ error.game_url }}" class="detail-author-link">{{ error.game_title }}</a></span>
+            <span><a href="/search?type=error&category={{ error.category_id }}" class="article-tag-sm" style="text-decoration:none;">{{ error.category_name }}</a></span>
+            <span>{{ error.created_text }}</span>
+            <span class="view-count-detail" title="浏览量">登录浏览：<span id="view-count-user">{{ error.view_user }}</span> | 访客浏览：<span id="view-count-guest">{{ error.view_guest }}</span></span>
+        </div>
+
+        {{ detail_sections_html|raw }}
+        {{ revisions_html|raw }}
+
+        {% include 'front/partials/error_detail_actions.twig' %}
+    </div>
+</article>

@@ -1,0 +1,13 @@
+{% if is_logged_in or solution_submit_url or error_edit_url %}
+<div class="detail-actions" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+    {% if error_edit_url %}
+        <a class="btn btn-secondary btn-sm" href="{{ error_edit_url }}">编辑报错</a>
+    {% endif %}
+    {% if solution_submit_url %}
+        <a class="btn btn-secondary btn-sm" href="{{ solution_submit_url }}">提交解决方案</a>
+    {% endif %}
+    {% if can_edit and from_admin %}
+        <a class="btn btn-secondary btn-sm" href="/admin/errors.php">返回管理列表</a>
+    {% endif %}
+</div>
+{% endif %}

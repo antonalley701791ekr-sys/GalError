@@ -1,0 +1,81 @@
+{% set page_title = page_title|default('控制台') %}
+{% set admin_css_mtime = admin_css_mtime|default('') %}
+{% set admin_head_html = admin_head_html|default('') %}
+{% set header_html = header_html|default('') %}
+{% set sidebar_html = sidebar_html|default('') %}
+{% set footer_scripts_html = footer_scripts_html|default('') %}
+{% set message = message|default('') %}
+{% set message_type = message_type|default('') %}
+
+{% set content_html %}
+<div class="admin-stats-grid">
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--cyan">{{ stats.total_games }}</h3><p class="stat-label">收录游戏</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--green">{{ stats.total_errors }}</h3><p class="stat-label">报错总数</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--yellow">{{ stats.pending_errors }}</h3><p class="stat-label">待审核报错</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--orange">{{ stats.pending_games }}</h3><p class="stat-label">待审核游戏</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--purple">{{ stats.approved_errors }}</h3><p class="stat-label">已通过报错</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--pink">{{ stats.pending_articles }}</h3><p class="stat-label">待审核文章</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--teal">{{ stats.pending_solutions }}</h3><p class="stat-label">待审核方案</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--green">{{ stats.total_articles }}</h3><p class="stat-label">已发布文章</p></div></div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        最新待审核报错
+        {% if stats.pending_errors > 0 %}
+            <a href="errors.php?status=pending" class="btn btn-success" style="float: right; font-size: 14px; padding: 6px 12px;">查看全部</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if recentErrors is not empty %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>游戏</th>
+                            <th>分类</th>
+                            <th>提交时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for error in recentErrors %}
+                            <tr>
+                                <td>{{ error.title }}</td>
+                                <td>{{ error.game_title }}</td>
+                                <td>{{ error.category_name }}</td>
+                                <td>{{ error.created_at|date('Y-m-d H:i') }}</td>
+                                <td>
+                                    <a href="errors.php?action=view&id={{ error.id }}" class="btn" style="font-size: 12px; padding: 4px 8px;">查看</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center" style="padding: 40px;">
+                <span class="text-muted">暂无待审核的报错</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
+    <div class="card">
+        <div class="card-header">快捷操作</div>
+        <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="games.php?action=add" class="btn">添加游戏</a>
+                <a href="games.php?status=pending" class="btn btn-secondary">审核游戏</a>
+                <a href="categories.php?action=add" class="btn btn-secondary">添加分类</a>
+                <a href="errors.php?status=pending" class="btn btn-secondary">审核报错</a>
+                <a href="article_review.php?status=pending" class="btn btn-secondary">审核文章</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endset %}
+
+{% include 'admin/layout.twig' %}

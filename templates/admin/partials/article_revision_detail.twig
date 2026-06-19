@@ -1,0 +1,56 @@
+{% set oldToc = viewRevision.old_toc_config ? viewRevision.old_toc_config|json_decode : [] %}
+{% set newToc = viewRevision.new_toc_config ? viewRevision.new_toc_config|json_decode : [] %}
+<div class="admin-page-header">
+    <h1>查看文章修改</h1>
+    <a href="article_review.php?action=revisions" class="btn btn-secondary">返回修订列表</a>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">修订信息</div>
+    <div class="card-body">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:0.88rem;color:var(--text-muted);margin-bottom:16px;">
+            <span>修改者：<strong style="color:var(--text-primary);">{{ viewRevision.rev_username|default('未知') }}</strong></span>
+            <span>提交时间：{{ viewRevision.created_at|date('Y-m-d H:i') }}</span>
+            <span>状态：<span class="status status-{{ viewRevision.status }}">{{ viewRevision.status == 'pending' ? '待审核' : (viewRevision.status == 'approved' ? '已通过' : '已驳回') }}</span></span>
+        </div>
+
+        {% if viewRevision.reject_reason %}
+            <div class="info-block info-block-danger" style="margin-bottom:16px;">
+                <strong>驳回原因：</strong>{{ viewRevision.reject_reason }}
+            </div>
+        {% endif %}
+
+        {% include 'admin/partials/article_revision_diff_fields.twig' with {
+            oldData: {
+                'title': viewRevision.old_title,
+                'tags': viewRevision.old_tags
+            },
+            newData: {
+                'title': viewRevision.new_title,
+                'tags': viewRevision.new_tags
+            },
+            fieldLabels: {
+                'title': '标题变更',
+                'tags': '标签变更'
+            }
+        } %}
+
+        {% include 'admin/partials/article_revision_diff_toc.twig' with { oldToc: oldToc, newToc: newToc } %}
+
+        {% include 'admin/partials/article_revision_diff_content.twig' with {
+            oldContent: viewRevision.old_content|default(''),
+            newContent: viewRevision.new_content|default('')
+        } %}
+
+        {% if viewRevision.status == 'pending' %}
+            <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+                <form method="post" action="article_review.php?rev_id={{ viewRevision.id }}" style="display:inline;">
+                    {{ csrf_input('admin_form')|raw }}
+                    <input type="hidden" name="action" value="approve_revision">
+                    <button type="submit" class="btn btn-success" onclick="return confirm('确定通过此修改？修改将直接应用到文章。');">通过修改</button>
+                </form>
+                <button type="button" class="btn btn-danger" onclick="openRejectModal('article_review.php?action=reject_revision&rev_id={{ viewRevision.id }}')">驳回修改</button>
+            </div>
+        {% endif %}
+    </div>
+</div>

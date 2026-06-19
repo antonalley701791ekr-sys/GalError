@@ -1,0 +1,66 @@
+<div class="card">
+    <div class="card-header">{{ action == 'add' ? '添加广告' : '编辑广告' }}</div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {{ csrf_input('admin_form')|raw }}
+            <div class="form-group">
+                <label class="form-label">类型</label>
+                <select name="type" class="form-select" style="max-width: 200px;" id="ad_type" onchange="toggleAdType()">
+                    <option value="text" {{ (editAd.type|default('')) == 'text' ? 'selected' : '' }}>文字</option>
+                    <option value="image" {{ (editAd.type|default('')) == 'image' ? 'selected' : '' }}>图片</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">标题 *</label>
+                <input type="text" name="title" class="form-input" required value="{{ editAd.title|default('') }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">内容</label>
+                <textarea name="content" class="form-textarea" rows="3">{{ editAd.content|default('') }}</textarea>
+            </div>
+            <div class="form-group" id="ad_image_group">
+                <label class="form-label">广告图片</label>
+                {% if editAd and editAd.image %}
+                    <div class="image-preview" style="margin-bottom: 10px;">
+                        <img src="/{{ editAd.image }}" alt="当前图片">
+                    </div>
+                {% endif %}
+                <input type="file" name="image" class="form-input" accept="image/*">
+                <p class="form-hint">支持 JPG/PNG/GIF，最大 5MB</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">链接地址</label>
+                <input type="url" name="link" class="form-input" value="{{ editAd.link|default('') }}" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">展示位置</label>
+                <select name="position" class="form-select" style="max-width: 200px;">
+                    {% for val,label in posText %}
+                        <option value="{{ val }}" {{ (editAd.position|default('')) == val ? 'selected' : '' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">排序</label>
+                <input type="number" name="sort_order" class="form-input" value="{{ editAd.sort_order|default(0) }}" min="0" style="max-width: 200px;">
+            </div>
+            <div class="form-group">
+                <label style="font-weight: normal; cursor: pointer;">
+                    <input type="checkbox" name="enabled" value="1" {{ editAd.enabled|default(1) ? 'checked' : '' }}> 启用
+                </label>
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn">{{ action == 'add' ? '添加' : '更新' }}</button>
+                <a href="ads.php" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleAdType() {
+    var type = document.getElementById('ad_type').value;
+    document.getElementById('ad_image_group').style.display = type === 'image' ? '' : 'none';
+}
+toggleAdType();
+</script>

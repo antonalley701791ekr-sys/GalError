@@ -1,0 +1,11 @@
+{% for field, label in fieldLabels %}
+    {% set oldVal = oldData[field]|default('') %}
+    {% set newVal = newData[field]|default('') %}
+    {% if oldVal != newVal %}
+        <div style="margin-bottom:12px;">
+            <strong style="color:var(--accent-purple);">{{ label }}：</strong>
+            <div class="diff-removed">{{ oldVal|default('无')|striptags }}</div>
+            <div class="diff-added">{{ newVal|default('无')|striptags }}</div>
+        </div>
+    {% endif %}
+{% endfor %}

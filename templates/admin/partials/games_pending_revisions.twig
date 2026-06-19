@@ -1,0 +1,56 @@
+{% if pendingGameRevisions is not empty %}
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">待审核游戏修改</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>封面</th><th>游戏</th><th>提交者</th><th>提交时间</th><th>变更摘要</th><th>调试</th><th>操作</th></tr></thead>
+                <tbody>
+                {% for rev in pendingGameRevisions %}
+                    {% set oldD = rev.old_data|json_decode %}
+                    {% set newD = rev.new_data|json_decode %}
+                    {% set changed = [] %}
+                    {% for field, label in {'title':'标题','title_jp':'日文名','romaji':'罗马音','aliases':'别名','developer':'开发商','release_date':'发售日','platforms':'平台','cover_image':'封面'} %}
+                        {% if (oldD[field]|default('')) != (newD[field]|default('')) %}
+                            {% set changed = changed|merge([label]) %}
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        <td>
+                            {% if rev.cover_url %}
+                                <img src="{{ rev.cover_url }}" alt="{{ rev.game_title }}" style="width:50px;height:70px;object-fit:cover;border-radius:4px;border:1px solid var(--glass-border);">
+                            {% else %}
+                                <div style="width:50px;height:70px;background:var(--glass-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;" class="text-muted">无</div>
+                            {% endif %}
+                        </td>
+                        <td><a href="/game.php?id={{ rev.game_id }}&from_admin=1" target="_blank">{{ rev.game_title }}</a></td>
+                        <td>{{ rev.submitter_name|default('匿名用户') }}</td>
+                        <td>{{ rev.created_at|date('Y-m-d H:i') }}</td>
+                        <td>{{ changed|join('、') ?: '无' }}</td>
+                        <td style="font-size:11px;line-height:1.4;max-width:260px;word-break:break-all;white-space:normal;">
+                            <div><strong>cover_url:</strong> {{ rev.cover_url|default('') }}</div>
+                            <div><strong>new.cover_image:</strong> {{ newD.cover_image|default('') }}</div>
+                            <div><strong>game.cover_image:</strong> {{ rev.cover_image|default('') }}</div>
+                            <div><strong>game.vndb_cover_url:</strong> {{ rev.vndb_cover_url|default('') }}</div>
+                        </td>
+                        <td>
+                            {% include 'admin/partials/review_actions.twig' with {
+                                canApprove: true,
+                                approveAction: '?rev_id=' ~ rev.id,
+                                approveActionName: 'approve',
+                                approveLabel: '通过',
+                                approveConfirm: '确定通过此游戏修改？修改将直接应用。',
+                                canReject: true,
+                                rejectAction: '?action=reject_revision&rev_id=' ~ rev.id,
+                                rejectLabel: '驳回',
+                                rejectReason: rev.reject_reason|default('未通过审核')
+                            } %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}

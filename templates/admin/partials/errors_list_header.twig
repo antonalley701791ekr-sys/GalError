@@ -1,0 +1,18 @@
+<div class="admin-page-header">
+    <h1>报错管理</h1>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a class="btn btn-secondary btn-sm{% if status|default('') == '' %} active{% endif %}" href="?">全部{% if stats is defined %} ({{ stats.total }}){% endif %}</a>
+        <a class="btn btn-secondary btn-sm{% if status|default('') == 'pending' %} active{% endif %}" href="?status=pending">待审核{% if stats is defined %} ({{ stats.pending }}){% endif %}</a>
+        <a class="btn btn-secondary btn-sm{% if status|default('') == 'approved' %} active{% endif %}" href="?status=approved">已通过{% if stats is defined %} ({{ stats.approved }}){% endif %}</a>
+        <a class="btn btn-secondary btn-sm{% if status|default('') == 'rejected' %} active{% endif %}" href="?status=rejected">已拒绝{% if stats is defined %} ({{ stats.rejected }}){% endif %}</a>
+    </div>
+</div>
+
+{% if stats is defined %}
+<div class="admin-stats-grid" style="margin-top:16px;">
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--cyan">{{ stats.total }}</h3><p class="stat-label">总数</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--yellow">{{ stats.pending }}</h3><p class="stat-label">待审核</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--green">{{ stats.approved }}</h3><p class="stat-label">已通过</p></div></div>
+    <div class="card stat-card"><div class="card-body"><h3 class="stat-number stat-number--red">{{ stats.rejected }}</h3><p class="stat-label">已拒绝</p></div></div>
+</div>
+{% endif %}

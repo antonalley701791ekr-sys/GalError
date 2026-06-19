@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+{{ header_html|raw }}
+<section class="search-box">
+    <div class="container">
+        <form class="search-form search-form-tabbed" method="get" action="/search">
+            <div class="search-tabs">
+                <label class="search-tab"><input type="radio" name="type" value="article" {{ search_type == 'article' ? 'checked' : '' }}><span>文章</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="game" {{ search_type == 'game' ? 'checked' : '' }}><span>游戏</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="error" {{ search_type == 'error' ? 'checked' : '' }}><span>报错内容</span></label>
+                <label class="search-tab"><input type="radio" name="type" value="discussion" {{ search_type == 'discussion' ? 'checked' : '' }}><span>话题</span></label>
+            </div>
+            <div class="search-input-row">
+                <input type="text" name="q" class="search-input" placeholder="搜索{{ type_labels[search_type] }}..." value="{{ query }}">
+                <select name="category" class="form-select search-category-select" data-error-filter="1">
+                    <option value="">所有分类</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {{ category == cat.id ? 'selected' : '' }}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="system_category" class="form-select search-system-category-select" data-error-filter="1">
+                    <option value="">所有系统</option>
+                    {% for scKey, scLabel in system_category_options %}
+                        <option value="{{ scKey }}" {{ system_category == scKey ? 'selected' : '' }}>{{ scLabel }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="search-btn">搜索</button>
+                {% if has_filters %}<a href="/search" class="btn btn-secondary">清除</a>{% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+{{ announcement_html|raw }}
+<main class="main">
+<div class="container">
+{% if has_filters %}
+<div class="mb-20">
+<h2>搜索结果 - {{ type_labels[search_type] }}</h2>
+<p class="text-muted" style="margin-top: 10px;">
+{% if query %}关键词：<strong>{{ query }}</strong>{% endif %}
+{% if current_category_name %} 分类：<strong>{{ current_category_name }}</strong>{% endif %}
+{% if current_system_category_name %} 系统分类：<strong>{{ current_system_category_name }}</strong>{% endif %}
+{% if total > 0 %} ，共找到 <strong>{{ total }}</strong> 条结果{% endif %}
+</p>
+</div>
+{% if results is not empty %}
+<div class="card"><div class="card-body">
+{% if search_type == 'game' %}
+<div class="game-list">{% for game in results %}<a href="{{ game.url }}" class="game-item">{% if game.cover_url %}<img src="{{ game.cover_url }}" alt="{{ game.title }}" class="game-cover" loading="lazy">{% else %}<div class="game-cover no-cover">暂无封面</div>{% endif %}<div class="game-title">{{ game.title }}</div><div class="game-info">{% if game.developer %}<div>开发商：{{ game.developer }}</div>{% endif %}{% if game.vndb_id %}<div>VNDB：{{ game.vndb_id }}</div>{% endif %}<div class="view-count-inline" title="浏览量">{{ game.view_count }}</div></div></a>{% endfor %}</div>
+{% elseif search_type in ['article','discussion'] %}
+<div class="article-list article-list-grid">{% for item in results %}<a class="article-card" href="{{ item.url }}"><h3 class="article-list-title">{{ item.title }}</h3><div class="article-list-meta"><span class="article-author-inline">{{ item.username }}</span><span>{{ item.created_date }}</span><span class="view-count-inline" title="浏览量">{{ item.view_count }}</span>{% if search_type == 'discussion' %}<span class="comment-count-inline" title="评论数">{{ item.comment_count }}</span>{% endif %}</div>{% if item.tags is not empty %}<div class="article-list-tags">{% for t in item.tags %}<span class="article-tag-sm {{ t.matched ? 'tag-matched' : '' }}">{{ t.value }}</span>{% endfor %}</div>{% endif %}<p class="article-list-summary">{{ item.summary }}...</p></a>{% endfor %}</div>
+{% else %}
+{% for result in results %}<a class="error-card" href="{{ result.url }}"><h3 class="error-title">{{ result.title }}</h3><div class="error-meta"><span>游戏：{{ result.game_title }}</span>{% if result.vndb_id %}<span>VNDB：{{ result.vndb_id }}</span>{% endif %}<span>分类：<span class="article-tag-sm {{ result.category_matched ? 'tag-matched' : '' }}">{{ result.category_name }}</span></span><span>时间：{{ result.created_date }}</span>{% if result.system_category == 'android_emulator' %}{% if result.android_cpu %}<span>处理器：{{ result.android_cpu }}</span>{% endif %}{% if result.android_model %}<span>机型：{{ result.android_model }}</span>{% endif %}{% if result.android_version %}<span>安卓：{{ result.android_version }}</span>{% endif %}{% endif %}<span class="view-count-inline" title="浏览量">{{ result.view_count }}</span></div>{% if result.phenomenon_short %}<div class="error-content"><div class="error-section"><h4>问题描述：</h4><p>{{ result.phenomenon_short }}</p></div></div>{% endif %}<div class="error-content"><div class="error-section"><h4>解决方案：</h4><p>{{ result.solution_short }}</p></div></div></a>{% endfor %}
+{% endif %}
+</div></div>
+{% if pagination.totalPages > 1 %}
+<div class="pagination">{% if pagination.hasPrev %}<a href="?{{ pager_params }}&page={{ pagination.page - 1 }}">上一页</a>{% endif %}{% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}{% if i == pagination.page %}<span class="current">{{ i }}</span>{% else %}<a href="?{{ pager_params }}&page={{ i }}">{{ i }}</a>{% endif %}{% endfor %}{% if pagination.hasNext %}<a href="?{{ pager_params }}&page={{ pagination.page + 1 }}">下一页</a>{% endif %}</div>
+{% endif %}
+{% else %}
+<div class="card"><div class="card-body text-center empty-state"><p>未找到相关结果</p><p class="text-muted">请尝试使用其他关键词或切换搜索分类</p></div></div>
+{% endif %}
+{% else %}
+<div class="card"><div class="card-body text-center empty-state"><p>请输入搜索关键词或选择分类/系统分类</p></div></div>
+{% endif %}
+</div>
+</main>
+{{ footer_html|raw }}
+<script>
+(function() {
+var labels = {article:'搜索文章标题/内容/标签...',game:'搜索游戏名称...',error:'搜索报错内容...',discussion:'搜索话题标题/内容/标签...'};
+function updateSearchModeUI(type){var input=document.querySelector('.search-input');if(input){input.placeholder=labels[type]||'';}var errorFilters=document.querySelectorAll('[data-error-filter="1"]');errorFilters.forEach(function(el){el.style.display=(type==='error')?'':'none';el.disabled=(type!=='error');});}
+var radios=document.querySelectorAll('.search-tab input[name="type"]');radios.forEach(function(radio){radio.addEventListener('change',function(){updateSearchModeUI(this.value);});});
+var checked=document.querySelector('.search-tab input[name="type"]:checked');updateSearchModeUI(checked?checked.value:'article');
+})();
+</script>
+</body>
+</html>

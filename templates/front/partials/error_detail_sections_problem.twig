@@ -1,0 +1,7 @@
+{% if error_has_phenomenon %}
+<div class="error-detail-section">
+    <h3>问题描述</h3>
+    <div class="error-detail-text">{{ phenomenon_html|raw }}</div>
+    {% include 'front/partials/error_detail_screenshot_list.twig' with { title: '报错截图', alt_text: '报错截图', screenshot_urls: screenshot_urls } only %}
+</div>
+{% endif %}

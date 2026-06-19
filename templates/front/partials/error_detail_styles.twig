@@ -1,0 +1,35 @@
+<style>
+.comment-item { transition: background-color .35s ease, box-shadow .35s ease, border-color .35s ease, transform .35s ease; }
+.comment-body .comment-reply-header,
+.comment-body .comment-reply-header a,
+.comment-body .comment-reply-header a:hover,
+.comment-body .comment-reply-header a:visited,
+.comment-body .comment-reply-header a:active { color: rgba(148, 163, 184, 0.88) !important; text-decoration: none !important; opacity: 1 !important; font-style: italic; font-weight: 400; }
+.comment-body .comment-reply-header a:hover { color: rgba(176, 190, 207, 0.94) !important; }
+.comment-body .comment-reply-quote,
+.comment-body .comment-reply-quote:hover,
+.comment-body .comment-reply-quote:visited,
+.comment-body .comment-reply-quote:active { color: rgba(148, 163, 184, 0.88) !important; text-decoration: none !important; opacity: 1 !important; }
+.error-detail-text {
+    line-height: 1.85;
+    color: var(--text-primary);
+    word-break: break-word;
+}
+.error-subsection {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--glass-border, rgba(255,255,255,.12));
+    border-radius: 12px;
+    background: var(--glass-bg, rgba(255,255,255,.03));
+}
+.error-subsection h4 {
+    margin: 0 0 10px;
+    font-size: .95rem;
+    color: var(--text-secondary);
+}
+@media (max-width: 768px) {
+    .error-card .error-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: flex-start; justify-content: flex-start; }
+    .error-card .error-meta > span { min-width: 0; }
+    .error-card .error-meta .article-tag-sm { display: inline-flex; align-items: center; max-width: 100%; min-width: 0; width: auto; box-sizing: border-box; flex: 0 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+}
+</style>

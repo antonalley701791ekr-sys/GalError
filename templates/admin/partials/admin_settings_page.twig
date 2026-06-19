@@ -1,0 +1,5 @@
+<div class="admin-page-header"><h1>个人设置</h1></div>
+{% if message %}<div class="admin-alert-{{ message_type }}">{{ message }}</div>{% endif %}
+{% include 'admin/partials/admin_settings_avatar.twig' %}
+{% include 'admin/partials/admin_settings_username.twig' %}
+{% include 'admin/partials/admin_settings_password.twig' %}

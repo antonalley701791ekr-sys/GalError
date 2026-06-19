@@ -1,0 +1,56 @@
+<div class="card">
+    <div class="card-header">报错列表{% if total is defined %}<span class="text-muted" style="float:right;font-weight:normal;">共 {{ total }} 条记录</span>{% endif %}</div>
+    <div class="card-body">
+        {% if errors is empty %}
+            <p class="text-muted" style="text-align:center;padding:20px;">暂无报错数据</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>标题</th><th>游戏</th><th>分类</th><th>状态</th><th>提交时间</th><th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for error in errors %}
+                            <tr>
+                                <td>{{ error.id }}</td>
+                                <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ error.title }}</td>
+                                <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ error.game_title }}</td>
+                                <td>{{ error.category_name }}</td>
+                                <td><span class="status status-{{ error.status }}">{{ error.status == 'pending' ? '待审核' : (error.status == 'approved' ? '已通过' : '已驳回') }}</span></td>
+                                <td>{{ error.created_at|date('Y-m-d H:i') }}</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="/admin/errors.php?action=view&id={{ error.id }}" class="btn btn-sm">查看</a>
+                                        <form method="post" action="/admin/errors.php?id={{ error.id }}" style="display:inline;">
+                                            {{ csrf_input('admin_form')|raw }}
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确认删除此报错？');">删除</button>
+                                        </form>
+                                        {% if error.status == 'pending' %}
+                                            {% include 'admin/partials/review_actions.twig' with {
+                                                canApprove: true,
+                                                approveAction: '/admin/errors.php?id=' ~ error.id,
+                                                approveActionName: 'approve',
+                                                approveId: error.id,
+                                                approveLabel: '通过',
+                                                approveConfirm: '确认通过？',
+                                                canReject: true,
+                                                rejectAction: '/admin/errors.php?action=reject&id=' ~ error.id,
+                                                rejectId: error.id,
+                                                rejectLabel: '驳回',
+                                                rejectConfirm: '确认驳回此报错？',
+                                                rejectReason: error.reject_reason|default('未通过审核')
+                                            } %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>

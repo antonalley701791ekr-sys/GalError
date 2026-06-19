@@ -1,0 +1,8 @@
+{% if show_vndb|default(true) %}
+    {% include 'admin/partials/games_field_display_text.twig' with { label: 'VNDB ID', value: game.vndb_id|default('-') } %}
+{% endif %}
+{% include 'admin/partials/games_field_display_text.twig' with { label: '游戏标题', value: game.title } %}
+{% if game.title_jp %}{% include 'admin/partials/games_field_display_text.twig' with { label: '日文原名', value: game.title_jp } %}{% endif %}
+{% if game.romaji %}{% include 'admin/partials/games_field_display_text.twig' with { label: '罗马音', value: game.romaji } %}{% endif %}
+{% if game.aliases %}{% include 'admin/partials/games_field_display_text.twig' with { label: '别名', value: game.aliases } %}{% endif %}
+{% if game.developer %}{% include 'admin/partials/games_field_display_text.twig' with { label: '开发商', value: game.developer } %}{% endif %}

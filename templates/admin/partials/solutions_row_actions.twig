@@ -1,0 +1,19 @@
+<td>
+    {% if row.status == 'pending' %}
+        <form method="post" action="/admin/solutions.php?id={{ row.id }}" style="display:inline;">
+            {{ csrf_input('admin_form')|raw }}
+            <input type="hidden" name="action" value="approve">
+            <button class="btn btn-success" style="font-size:12px;padding:4px 8px;">通过</button>
+        </form>
+        <form method="post" action="/admin/solutions.php?id={{ row.id }}" style="display:inline;">
+            {{ csrf_input('admin_form')|raw }}
+            <input type="hidden" name="action" value="reject">
+            <button class="btn btn-danger" style="font-size:12px;padding:4px 8px;">拒绝</button>
+        </form>
+    {% endif %}
+    <form method="post" action="/admin/solutions.php?id={{ row.id }}" style="display:inline;">
+        {{ csrf_input('admin_form')|raw }}
+        <input type="hidden" name="action" value="primary">
+        <button class="btn btn-secondary" style="font-size:12px;padding:4px 8px;">设主</button>
+    </form>
+</td>

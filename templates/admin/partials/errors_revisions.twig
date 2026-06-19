@@ -1,0 +1,12 @@
+<div class="card">
+    <div class="card-header">修改记录列表{% if revisions is not empty %}<span class="text-muted" style="float:right;font-weight:normal;">共 {{ revisions|length }} 条记录</span>{% endif %}</div>
+    <div class="card-body">
+        {% if revisions is empty %}
+            <p class="text-muted" style="text-align:center;padding:20px;">暂无修改记录</p>
+        {% else %}
+            {% for rev in revisions %}
+                {% include 'admin/partials/errors_revision_entry.twig' with { rev: rev } %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

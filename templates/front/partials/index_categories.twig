@@ -1,0 +1,13 @@
+<section class="mb-20">
+    <h2 class="card-header">常见报错分类</h2>
+    <div class="card-body">
+        <div class="category-list">
+            {% for category in categories %}
+                <a href="/search?type=error&category={{ category.id }}" class="category-item">
+                    <div class="category-name">{{ category.name }}</div>
+                    <div class="category-desc">{{ category.description }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

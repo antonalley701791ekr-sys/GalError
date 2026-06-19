@@ -1,0 +1,11 @@
+<div style="margin-bottom:12px;">
+    <strong>{{ label|default('图片') }}：</strong>
+    {% if game.cover_image %}
+        <div style="margin-top:8px;">
+            <img src="{{ game.cover_image }}" alt="{{ label|default('图片') }}" style="width:140px;height:196px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);">
+        </div>
+        <p class="form-hint" style="margin-top:8px;">支持 JPG/PNG 格式，单张图片大小不超过 4MB。上传图片时请注意不要超过 4MB。</p>
+    {% else %}
+        <span class="text-muted">暂无</span>
+    {% endif %}
+</div>

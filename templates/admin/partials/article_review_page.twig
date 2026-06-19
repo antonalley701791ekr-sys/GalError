@@ -1,0 +1,12 @@
+{% include 'admin/partials/article_review_header.twig' %}
+
+{% if action == 'view_revision' and viewRevision is defined and viewRevision %}
+    {% include 'admin/partials/article_revision_detail.twig' %}
+{% elseif action == 'view' and viewArticle is defined and viewArticle %}
+    {% include 'admin/partials/article_detail.twig' %}
+{% elseif action == 'revisions' %}
+    {% include 'admin/partials/article_revisions_list.twig' %}
+{% else %}
+    {% include 'admin/partials/article_list.twig' %}
+{% endif %}
+

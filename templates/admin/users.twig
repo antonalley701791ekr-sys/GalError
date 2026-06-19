@@ -1,0 +1,9 @@
+{% set page_title = page_title|default('管理员设置') %}
+{% set admin_css_mtime = admin_css_mtime|default('') %}
+{% set message = message|default('') %}
+{% set message_type = message_type|default('') %}
+{% set extra_stylesheets = extra_stylesheets|default([]) %}
+{% set content_html %}
+    {% include 'admin/partials/users_page.twig' %}
+{% endset %}
+{% include 'admin/layout.twig' %}

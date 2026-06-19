@@ -1,0 +1,12 @@
+<div class="admin-page-header">
+    <h1>{{ discussion ? discussion.title : '讨论详情' }}</h1>
+    <a href="/discussions" class="btn btn-secondary">返回讨论区</a>
+</div>
+
+{% include 'admin/partials/discussion_detail.twig' %}
+{% include 'admin/partials/discussion_comments.twig' %}
+{% include 'admin/partials/discussion_comment_modal.twig' %}
+<script src="/assets/js/marked.min.js?v={{ _assets_ver }}"></script>
+<script src="/assets/js/comment-collapse.js?v={{ _assets_ver }}"></script>
+<script src="/assets/js/comment-interactions.js?v={{ _assets_ver }}"></script>
+<script src="/assets/js/discussion-comments.js?v={{ _assets_ver }}"></script>

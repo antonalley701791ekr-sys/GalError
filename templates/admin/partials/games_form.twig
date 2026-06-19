@@ -1,0 +1,20 @@
+<div class="card">
+    <div class="card-header">{{ formTitle|default('游戏表单') }}</div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% if game is defined and game %}
+                <input type="hidden" name="edit_game_id" value="{{ game.id }}">
+            {% endif %}
+
+            {% include 'admin/partials/games_field_group_basic.twig' with { game: game } %}
+            {% include 'admin/partials/games_field_group_meta.twig' with { game: game } %}
+
+            <div class="form-group">
+                <div class="btn-group">
+                    <button type="submit" class="btn">{{ submitLabel|default('保存') }}</button>
+                    <a href="games.php" class="btn btn-secondary">取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

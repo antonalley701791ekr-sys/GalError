@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - {{ _site_name }} 管理后台</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}-{{ admin_css_mtime }}">
+    {% if _admin_users_css_ver is defined %}
+        <link rel="stylesheet" href="/assets/css/style.css?v={{ _admin_users_css_ver }}">
+    {% endif %}
+    {% if extra_stylesheets is defined %}
+        {% for stylesheet in extra_stylesheets %}
+            <link rel="stylesheet" href="{{ stylesheet }}">
+        {% endfor %}
+    {% endif %}
+    {{ admin_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+{{ header_html|raw }}
+<div class="admin-layout">
+    {{ sidebar_html|raw }}
+    <div class="admin-content">
+        <main class="admin-main">
+            {% if page_header_html is defined and page_header_html %}
+                {{ page_header_html|raw }}
+            {% endif %}
+
+            {% if message %}
+                <div class="admin-alert-{{ message_type }}">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            {{ content_html|raw }}
+        </main>
+    </div>
+</div>
+{{ footer_scripts_html|raw }}
+{% if extra_scripts_html is defined and extra_scripts_html %}
+    {{ extra_scripts_html|raw }}
+{% endif %}
+</body>
+</html>

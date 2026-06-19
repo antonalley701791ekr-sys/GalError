@@ -1,0 +1,25 @@
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">筛选与操作</div>
+    <div class="card-body">
+        <form method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end;">
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">关键词</label>
+                <input type="text" name="keyword" class="form-input" placeholder="匹配词或文本片段" value="{{ keyword }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">域名</label>
+                <input type="text" name="domain" class="form-input" placeholder="如 github.com" value="{{ domainFilter }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">显示条数</label>
+                <select name="limit" class="form-select">
+                    {% for option in [20,50,100,200] %}<option value="{{ option }}" {{ limit == option ? 'selected' : '' }}>{{ option }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="margin:0;display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="submit" class="btn">筛选</button>
+                <a href="sensitive_logs.php" class="btn btn-secondary">重置</a>
+            </div>
+        </form>
+    </div>
+</div>

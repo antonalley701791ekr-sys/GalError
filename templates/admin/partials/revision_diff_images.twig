@@ -1,0 +1,17 @@
+<div style="margin-top: 12px;">
+    <strong style="color: var(--accent-purple);">{{ title }}：</strong>
+    {% if addedImages is not empty %}
+        <div class="diff-added" style="margin-top: 6px;">
+            {% for image in addedImages %}
+                <img src="{{ uploadUrl }}/{{ image }}" alt="" style="max-width: 120px; max-height: 80px; margin-right: 8px; margin-bottom: 8px; object-fit: cover;">
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if removedImages is not empty %}
+        <div class="diff-removed" style="margin-top: 6px;">
+            {% for image in removedImages %}
+                <img src="{{ uploadUrl }}/{{ image }}" alt="" style="max-width: 120px; max-height: 80px; margin-right: 8px; margin-bottom: 8px; object-fit: cover; opacity: 0.6;">
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

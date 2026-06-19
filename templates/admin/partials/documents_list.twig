@@ -1,0 +1,33 @@
+<div class="card">
+    <div class="card-header">文档列表 <span style="float:right;color:var(--text-muted);font-weight:normal;">共 {{ documents|length }} 条</span></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr><th>排序</th><th>背景图</th><th>标题</th><th>简介</th><th>状态</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                    {% if documents is empty %}
+                        <tr><td colspan="6" class="text-center text-muted" style="padding:40px;">暂无文档</td></tr>
+                    {% endif %}
+                    {% for doc in documents %}
+                        <tr>
+                            <td>{{ doc.sort_order }}</td>
+                            <td>{% if doc.image %}<img src="/{{ doc.image }}" alt="" style="max-width:100px;max-height:50px;border-radius:4px;object-fit:cover;">{% else %}<span class="text-muted">无</span>{% endif %}</td>
+                            <td><strong>{{ doc.title }}</strong></td>
+                            <td>{{ doc.description|default('')|slice(0,40) }}{{ doc.description|default('')|length > 40 ? '...' : '' }}</td>
+                            <td><span class="status-{{ doc.enabled ? 'enabled' : 'disabled' }}">{{ doc.enabled ? '启用' : '禁用' }}</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="?action=edit&id={{ doc.id }}" class="btn btn-sm">编辑</a>
+                                    <form method="post" action="?id={{ doc.id }}" style="display:inline;"><input type="hidden" name="_token" value="{{ csrf_token('admin_form') }}"><input type="hidden" name="action" value="toggle"><button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('确定切换该文档状态？')">{{ doc.enabled ? '禁用' : '启用' }}</button></form>
+                                    <form method="post" action="?id={{ doc.id }}" style="display:inline;"><input type="hidden" name="_token" value="{{ csrf_token('admin_form') }}"><input type="hidden" name="action" value="delete"><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('确定删除该文档？')">删除</button></form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

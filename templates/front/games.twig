@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏列表 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container">
+            <div class="mb-20" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <h2>游戏列表</h2>
+                    <p class="text-muted" style="margin-top:4px;font-size:0.85rem;">共 {{ total }} 款游戏</p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="/" class="btn btn-secondary">返回首页</a>
+                    <a href="/submit_game" class="btn">提交游戏</a>
+                </div>
+            </div>
+
+            {% if games is not empty %}
+                <div class="game-list">
+                    {% for game in games %}
+                        <a href="{{ game.url }}" class="game-item">
+                            {% if game.cover_url %}
+                                <img src="{{ game.cover_url }}" alt="{{ game.title }}" class="game-cover" loading="lazy">
+                            {% else %}
+                                <div class="game-cover no-cover">暂无封面</div>
+                            {% endif %}
+                            <div class="game-title">{{ game.title }}</div>
+                            <div class="game-info">
+                                {% if game.developer %}
+                                    <div>开发商：{{ game.developer }}</div>
+                                {% endif %}
+                                {% if game.release_date %}
+                                    <div>发售日：{{ game.release_date }}</div>
+                                {% endif %}
+                                {% if game.vndb_id %}
+                                    <div>VNDB：{{ game.vndb_id }}</div>
+                                {% endif %}
+                                <div class="view-count-inline" title="浏览量">{{ game.view_count }}</div>
+                                <div class="comment-count-inline" title="报错数">{{ game.error_count }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+
+                {% if pagination.totalPages > 1 %}
+                    <div class="pagination">
+                        {% if pagination.hasPrev %}
+                            <a href="?page={{ pagination.page - 1 }}">上一页</a>
+                        {% endif %}
+                        {% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}
+                            {% if i == pagination.page %}
+                                <span class="current">{{ i }}</span>
+                            {% else %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.hasNext %}
+                            <a href="?page={{ pagination.page + 1 }}">下一页</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center empty-state">
+                        <p>暂无游戏</p>
+                        <p class="text-muted">来提交第一款游戏吧！</p>
+                        <a href="/submit_game" class="btn" style="margin-top:12px;">提交游戏</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+</body>
+</html>

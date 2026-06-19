@@ -1,0 +1,27 @@
+<tr>
+    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.error_title }}</td>
+    <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.game_title }}</td>
+    <td>{{ row.author_name|default('匿名') }}</td>
+    <td>{{ solutionNumberMap[row.id]|default(1) }}</td>
+    <td><span class="status status-{{ row.status }}">{{ row.status == 'pending' ? '待审核' : (row.status == 'approved' ? '已通过' : '已驳回') }}</span></td>
+    <td>{{ row.is_primary ? '是' : '否' }}</td>
+    <td>{{ row.created_at|date('Y-m-d H:i') }}</td>
+    <td>
+        <div class="action-btns">
+            <a href="/error_detail.php?id={{ row.error_id }}&from_admin=1" class="btn btn-sm">查看报错</a>
+            {% if row.status == 'pending' %}
+                <form method="post" action="/admin/solutions.php?id={{ row.id }}" style="display:inline;">
+                    {{ csrf_input('admin_form')|raw }}
+                    <input type="hidden" name="action" value="approve">
+                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('确定通过此解决方案？');">通过</button>
+                </form>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openRejectModal('/admin/solutions.php?id={{ row.id }}', '未通过审核')">驳回</button>
+            {% endif %}
+            <form method="post" action="/admin/solutions.php?id={{ row.id }}" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除此解决方案？');">删除</button>
+            </form>
+        </div>
+    </td>
+</tr>

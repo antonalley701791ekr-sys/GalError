@@ -1,0 +1,14 @@
+{% if canApprove|default(false) %}
+    <form method="post" action="{{ approveAction }}" style="display:inline;">
+        {{ csrf_input('admin_form')|raw }}
+        <input type="hidden" name="action" value="{{ approveActionName|default('approve') }}">
+        {% if approveId|default('') %}
+            <input type="hidden" name="id" value="{{ approveId }}">
+        {% endif %}
+        <button type="submit" class="btn btn-success btn-review-action{{ approveClass|default('') }}"{{ approveAttr|default('') }} onclick="return confirm('{{ approveConfirm|default('确认通过？') }}');">{{ approveLabel|default('通过') }}</button>
+    </form>
+{% endif %}
+
+{% if canReject|default(false) %}
+    <button type="button" class="btn btn-danger btn-review-action{{ rejectClass|default('') }}"{{ rejectAttr|default('') }} onclick="openRejectModal('{{ rejectAction }}', '{{ rejectReason|default('未通过审核')|e('js') }}')">{{ rejectLabel|default('驳回') }}</button>
+{% endif %}

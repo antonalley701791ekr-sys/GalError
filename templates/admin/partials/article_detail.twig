@@ -1,0 +1,72 @@
+<div class="card">
+    <div class="card-header">{{ viewArticle.title }}</div>
+    <div class="card-body">
+        <div style="margin-bottom:16px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.88rem;color:var(--text-muted);">
+            <span>作者：<strong style="color:var(--text-primary);">{{ viewArticle.username }}</strong></span>
+            <span>提交时间：{{ viewArticle.created_at|date('Y-m-d H:i') }}</span>
+            <span>状态：<span class="status status-{{ viewArticle.status }}">{{ viewArticle.status == 'pending' ? '待审核' : (viewArticle.status == 'approved' ? '已通过' : '已驳回') }}</span></span>
+            {% if viewArticle.has_pending_revision %}<span class="status status-pending">有待审核修改</span>{% endif %}
+        </div>
+
+        {% if viewArticle.tags %}
+            <div style="margin-bottom:16px;">
+                {% for tag in viewArticle.tags|split(',') %}
+                    <span class="status status-enabled" style="margin-right:6px;">{{ tag|trim }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if viewArticle.reject_reason %}
+            <div class="info-block info-block-danger" style="margin-bottom:16px;">
+                <strong>驳回原因：</strong>{{ viewArticle.reject_reason }}</div>
+        {% endif %}
+
+        <div class="markdown-body" style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:20px;background:var(--glass-bg);">
+            {% if viewArticle.content|length > 20000 %}
+                {{ viewArticle.content|slice(0, 20000)|raw }}
+                <div class="text-muted" style="margin-top:10px;">文章内容过长，已截断显示前 20000 个字符</div>
+            {% else %}
+                {{ viewArticle.content|raw }}
+            {% endif %}
+        </div>
+
+        {% include 'admin/partials/review_actions.twig' with {
+            canApprove: viewArticle.status == 'pending',
+            approveAction: 'article_review.php?id=' ~ viewArticle.id,
+            approveActionName: 'approve_article',
+            approveLabel: '通过',
+            approveConfirm: '确认通过该文章？',
+            canReject: viewArticle.status == 'pending',
+            rejectAction: 'article_review.php?action=reject_article&id=' ~ viewArticle.id,
+            rejectLabel: '驳回',
+            rejectReason: viewArticle.reject_reason|default('未通过审核')
+        } %}
+
+        <div style="margin-top:20px;">
+            <form method="post" action="article_review.php?id={{ viewArticle.id }}" style="display:inline;">
+                {{ csrf_input('admin_form')|raw }}
+                <input type="hidden" name="action" value="delete_article">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('确定要删除这篇文章吗？');">删除</button>
+            </form>
+        </div>
+
+        {% if articleRevisions is not empty %}
+            <div style="margin-top:24px;border-top:1px solid var(--glass-border);padding-top:20px;">
+                <h3 style="font-size:1rem;margin-bottom:12px;">修订记录 ({{ articleRevisions|length }})</h3>
+                {% for rev in articleRevisions %}
+                    <div style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;background:var(--glass-bg);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                            <div style="font-size:0.85rem;color:var(--text-muted);">
+                                <strong style="color:var(--text-primary);">{{ rev.rev_username|default('未知') }}</strong>
+                                · {{ rev.created_at|date('Y-m-d H:i') }}
+                                · <span class="status status-{{ rev.status }}">{{ rev.status == 'pending' ? '待审核' : (rev.status == 'approved' ? '已通过' : '已驳回') }}</span>
+                            </div>
+                            <a href="?action=view_revision&rev_id={{ rev.id }}" class="btn btn-sm">查看详情</a>
+                        </div>
+                        {% if rev.reject_reason %}<div style="font-size:0.82rem;color:#e74c3c;margin-top:6px;">驳回原因：{{ rev.reject_reason }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>

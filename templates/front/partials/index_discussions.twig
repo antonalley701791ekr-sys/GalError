@@ -1,0 +1,28 @@
+{% if recent_discussions is not empty %}
+<section class="mb-20">
+    <h2 class="card-header" style="display:flex;justify-content:space-between;align-items:center;">讨论区<a href="/discussions" class="btn btn-secondary btn-sm" style="font-size:0.8rem;">更多</a></h2>
+    <div class="card-body">
+        <div class="article-list article-list-grid">
+            {% for disc in recent_discussions %}
+                <a class="article-card" href="{{ disc.url }}">
+                    <h3 class="article-list-title">{{ disc.title_short }}</h3>
+                    <div class="article-list-meta">
+                        <span class="article-author-inline">{{ disc.username }}</span>
+                        <span>{{ disc.created_date }}</span>
+                        <span class="view-count-inline" title="浏览量">{{ disc.view_count }}</span>
+                        <span class="comment-count-inline" title="评论数">{{ disc.comment_count }}</span>
+                    </div>
+                    {% if disc.tags is not empty %}
+                        <div class="article-list-tags">
+                            {% for t in disc.tags %}
+                                <span class="article-tag-sm">{{ t }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="article-list-summary">{{ disc.summary }}...</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

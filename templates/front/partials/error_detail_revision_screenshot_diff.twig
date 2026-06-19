@@ -1,0 +1,26 @@
+{% if screenshot_diff is not empty %}
+    <div class="revision-diff"><strong>{{ title }}：</strong>
+        <div class="revision-images-diff">
+            {% if screenshot_diff.old is not empty %}
+            <div class="diff-removed">
+                <div class="text-muted" style="margin-bottom:6px;">修改前</div>
+                <div class="screenshot-list">
+                    {% for screenshot in screenshot_diff.old %}
+                        <img src="{{ screenshot }}" alt="{{ alt_text }}" class="screenshot-thumb js-image-viewer-trigger" data-viewer-src="{{ screenshot }}" data-viewer-alt="{{ alt_text }}">
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if screenshot_diff.new is not empty %}
+            <div class="diff-added">
+                <div class="text-muted" style="margin-bottom:6px;">修改后</div>
+                <div class="screenshot-list">
+                    {% for screenshot in screenshot_diff.new %}
+                        <img src="{{ screenshot }}" alt="{{ alt_text }}" class="screenshot-thumb js-image-viewer-trigger" data-viewer-src="{{ screenshot }}" data-viewer-alt="{{ alt_text }}">
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

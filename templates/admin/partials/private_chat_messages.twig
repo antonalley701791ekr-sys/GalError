@@ -1,0 +1,33 @@
+{% if hasMore %}
+    <div class="pm-load-more" id="loadMoreArea">
+        <a href="#" id="loadMoreBtn" data-page="2">加载更早的消息</a>
+    </div>
+{% endif %}
+
+<div class="pm-chat-container" id="chatContainer">
+    {% for msg in messages %}
+        <div class="pm-chat-bubble {{ msg.is_mine ? 'mine' : 'theirs' }}">
+            {% if msg.is_mine %}
+                {% if myAvatarUrl %}
+                    <img src="{{ myAvatarUrl }}" class="pm-bubble-avatar" alt="">
+                {% else %}
+                    <div class="pm-bubble-avatar fallback">{{ myInitial }}</div>
+                {% endif %}
+            {% else %}
+                {% if partnerAvatarUrl %}
+                    <img src="{{ partnerAvatarUrl }}" class="pm-bubble-avatar" alt="">
+                {% else %}
+                    <div class="pm-bubble-avatar fallback">{{ partnerInitial }}</div>
+                {% endif %}
+            {% endif %}
+            <div class="pm-bubble-body">
+                <div class="pm-bubble-content markdown-body">{{ msg.content_html|raw }}</div>
+                <span class="pm-bubble-time">{{ msg.created_at_display }}</span>
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:0.88rem;">暂无消息，发送第一条私信吧</div>
+    {% endfor %}
+</div>
+
+<div class="pm-error-msg" id="errorMsg"></div>

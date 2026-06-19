@@ -1,0 +1,87 @@
+<div class="card">
+    <div class="card-header">{{ action == 'add' ? '添加文档' : '编辑文档' }}</div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {{ csrf_input('admin_form')|raw }}
+            <div class="form-group">
+                <label class="form-label">标题 *</label>
+                <input type="text" name="title" class="form-input" required value="{{ editDoc.title|default('') }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">简介</label>
+                <textarea name="description" class="form-textarea" rows="3" placeholder="显示在轮播卡片底部的简短描述">{{ editDoc.description|default('') }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">正文内容</label>
+                <div class="md-editor-wrap">
+                    <div class="md-mode-tabs">
+                        <button type="button" class="md-mode-tab active" data-mode="edit">编写</button>
+                        <button type="button" class="md-mode-tab" data-mode="preview">预览</button>
+                        <button type="button" class="md-mode-tab" data-mode="split">分栏</button>
+                    </div>
+                    <div class="md-editor-toolbar">
+                        <button type="button" data-action="h1">H1</button>
+                        <button type="button" data-action="h2">H2</button>
+                        <button type="button" data-action="h3">H3</button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="bold"><b>B</b></button>
+                        <button type="button" data-action="italic"><i>I</i></button>
+                        <button type="button" data-action="strikethrough"><s>S</s></button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="link">链接</button>
+                        <button type="button" data-action="image">图片</button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="code">`</button>
+                        <button type="button" data-action="codeblock">&lt;/&gt;</button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="ul">•</button>
+                        <button type="button" data-action="ol">1.</button>
+                        <button type="button" data-action="quote">&gt;</button>
+                        <span class="md-toolbar-separator"></span>
+                        <button type="button" data-action="hr">---</button>
+                        <button type="button" data-action="table">表格</button>
+                        <button type="button" data-action="tsvtable">文本转表</button>
+                    </div>
+                    <div class="md-editor-body mode-edit">
+                        <textarea id="md-editor" name="content" class="md-editor-textarea" style="min-height:400px;" placeholder="支持 Markdown 语法...">{{ editDoc.content|default('') }}</textarea>
+                        <div id="md-preview" class="md-editor-preview-pane"></div>
+                    </div>
+                    <div class="md-editor-hint">支持 Markdown 语法 | <kbd>Tab</kbd> 缩进 | <kbd>Shift+Tab</kbd> 取消缩进</div>
+                </div>
+                <input type="file" id="md-image-uploader" accept="image/*" style="display:none;">
+                <p class="form-hint">点击文档后跳转到详情页展示此内容</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">背景图片</label>
+                {% if editDoc and editDoc.image %}
+                    <div class="image-preview" style="margin-bottom:10px;">
+                        <img src="/{{ editDoc.image }}" alt="当前背景图" style="max-width:320px;max-height:160px;border-radius:8px;">
+                    </div>
+                {% endif %}
+                <input type="file" name="image" class="form-input" accept="image/*" style="max-width:400px;">
+                <p class="form-hint">推荐尺寸 1920x900，支持 JPG/PNG/GIF/WebP，单张图片大小不超过 4MB。</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">链接地址</label>
+                <input type="url" name="link" class="form-input" value="{{ editDoc.link|default('') }}" placeholder="https://...">
+                <p class="form-hint">可选，填写后点击轮播将跳转到此链接而非详情页</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">排序</label>
+                <input type="number" name="sort_order" class="form-input" value="{{ editDoc.sort_order|default(0) }}" min="0" style="max-width:200px;">
+                <p class="form-hint">数值越小越靠前</p>
+            </div>
+            <div class="form-group">
+                <label style="font-weight:normal;cursor:pointer;"><input type="checkbox" name="enabled" value="1" {{ editDoc.enabled|default(1) ? 'checked' : '' }}> 启用</label>
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn">{{ action == 'add' ? '添加' : '更新' }}</button>
+                <a href="documents.php" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/assets/js/marked.min.js"></script>
+<script src="/assets/js/markdown-editor.js"></script>
+<script src="/assets/js/documents-editor.js?v={{ _assets_ver }}"></script>

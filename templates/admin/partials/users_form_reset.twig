@@ -1,0 +1,18 @@
+<div class="card">
+    <div class="card-header">重置密码：{{ resetAdmin.username }}</div>
+    <div class="card-body">
+        <form method="post">
+            {{ csrf_input('admin_form')|raw }}
+            <input type="hidden" name="action" value="reset_password">
+            <input type="hidden" name="id" value="{{ resetAdmin.id }}">
+            <div class="form-group">
+                <label class="form-label">新密码 *</label>
+                <input type="password" name="new_password" class="form-input" required minlength="8" style="max-width: 400px;">
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn">重置密码</button>
+                <a href="users.php" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>

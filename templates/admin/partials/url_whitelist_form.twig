@@ -1,0 +1,22 @@
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">编辑白名单</div>
+    <div class="card-body">
+        {% if not can_edit %}
+            <div class="admin-alert-warning" style="margin-bottom:20px;">您没有编辑权限，当前为只读模式。</div>
+        {% endif %}
+        <form method="post">
+            {{ csrf_input('admin_form')|raw }}
+            <div class="form-group">
+                <label class="form-label">域名列表</label>
+                <textarea name="domains" class="form-textarea" rows="18" placeholder="每行一个域名，例如 github.com" {{ can_edit ? '' : 'readonly' }}>{{ formValue }}</textarea>
+                <p class="form-hint">支持每行一个域名，也支持粘贴带协议的网址。保存时会自动转为小写、去重并清理路径。</p>
+            </div>
+            {% if can_edit %}
+                <div class="form-group" style="margin-bottom:0;display:flex;gap:10px;flex-wrap:wrap;">
+                    <button type="submit" class="btn">保存白名单</button>
+                    <a href="url_whitelist.php" class="btn btn-secondary">重新加载</a>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>

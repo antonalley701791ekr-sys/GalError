@@ -1,0 +1,5 @@
+{% set game = game|default({}) %}
+{% include 'admin/partials/games_field_group_basic.twig' with { game: game } %}
+{% include 'admin/partials/games_field_group_meta.twig' with { game: game } %}
+{% include 'admin/partials/games_field_group_cover.twig' with { game: game } %}
+{% include 'admin/partials/games_field_group_submitter.twig' with { game: game } %}

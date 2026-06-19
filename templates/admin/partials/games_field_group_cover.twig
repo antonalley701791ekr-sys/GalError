@@ -1,0 +1,8 @@
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-header">封面信息</div>
+    <div class="card-body">
+        {% include 'admin/partials/games_field_display_image.twig' with { game: game, label: '当前封面' } %}
+        {% include 'admin/partials/games_field_display_text.twig' with { label: '封面链接', value: game.cover_url|default('') ?: '暂无' } %}
+        {% include 'admin/partials/games_field_display_text.twig' with { label: '封面说明', value: game.cover_note|default('') ?: '暂无' } %}
+    </div>
+</div>

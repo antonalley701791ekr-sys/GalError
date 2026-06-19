@@ -1,0 +1,14 @@
+<div class="article-detail-container">
+    {% include 'front/partials/article_breadcrumb.twig' %}
+    {% include 'front/partials/article_revision_notice.twig' %}
+    {% include 'front/partials/article_detail_card.twig' %}
+    {% include 'front/partials/article_comments.twig' %}
+</div>
+
+{% include 'front/partials/article_comment_modal.twig' %}
+{% include 'front/partials/article_toc.twig' %}
+
+<script src="/assets/js/marked.min.js"></script>
+<script src="/assets/js/comment-collapse.js?v={{ _assets_ver }}"></script>
+{# comment-interactions.js 在文章页为惰性死加载（article-comments.js 自带按钮委托、不依赖它），故移除。详见 docs/评论系统梳理.md §七 #}
+<script src="/assets/js/article-comments.js?v={{ _assets_ver }}"></script>

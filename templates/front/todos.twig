@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站待办 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+{{ header_html|raw }}
+<main class="main">
+    <div class="container" style="max-width: 980px;">
+        <div class="discussion-header">
+            <div>
+                <h2>网站待办</h2>
+                <p class="text-muted" style="margin-top:4px;font-size:0.9rem;">公开展示网站计划与进展，登录用户均可查看</p>
+            </div>
+            <a href="/" class="btn btn-secondary">返回首页</a>
+        </div>
+
+        <div class="filter-tabs">
+            <a href="/todos" class="{{ not status ? 'active' : '' }}">全部 ({{ todo_stats.total }})</a>
+            <a href="/todos?status=pending" class="{{ status == 'pending' ? 'active' : '' }}">进行中 ({{ todo_stats.pending }})</a>
+            <a href="/todos?status=completed" class="{{ status == 'completed' ? 'active' : '' }}">已完成 ({{ todo_stats.completed }})</a>
+            <a href="/todos?status=cancelled" class="{{ status == 'cancelled' ? 'active' : '' }}">已取消 ({{ todo_stats.cancelled }})</a>
+        </div>
+
+        {% if todos is not empty %}
+            <div class="todo-public-list">
+                {% for todo in todos %}
+                    <article class="card todo-public-card">
+                        <div class="card-body">
+                            <div class="todo-public-header">
+                                <div>
+                                    <h3 class="todo-public-title">{{ todo.title }}</h3>
+                                    <div class="todo-public-meta">
+                                        <span>作者：{{ todo.author_text }}</span>
+                                        <span>创建：{{ todo.created_text }}</span>
+                                        <span>完成：{{ todo.completed_text }}</span>
+                                    </div>
+                                </div>
+                                <span class="status {{ todo.status_class }}">{{ todo.status_text }}</span>
+                            </div>
+                            {% if todo.description %}
+                                <p class="todo-public-description">{{ todo.description_html|raw }}</p>
+                            {% else %}
+                                <p class="todo-public-description text-muted">暂无描述</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card"><div class="card-body text-center empty-state"><p>暂无待办事项</p></div></div>
+        {% endif %}
+    </div>
+</main>
+{{ footer_html|raw }}
+</body>
+</html>

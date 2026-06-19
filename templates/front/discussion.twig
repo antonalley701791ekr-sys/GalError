@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ discussion.title }} - 讨论区 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/markdown-editor.css">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+    <main class="main"><div class="container" style="max-width:900px;">
+        {% include 'front/partials/discussion_breadcrumb.twig' %}
+        {% include 'front/partials/discussion_detail.twig' %}
+        {% include 'front/partials/discussion_comments.twig' %}
+    </div></main>
+    {% include 'front/partials/discussion_comment_modal.twig' %}
+    {{ footer_html|raw }}
+    <div id="view-counter-config" data-type="discussion" data-id="{{ discussion.id }}" data-csrf="{{ csrf_token('default') }}" style="display:none;"></div>
+    <script>
+        window.GalCommentConfig = {
+            contentType: 'discussion',
+            contentId: {{ discussion.id }},
+            csrfToken: '{{ csrf_token('default') }}',
+            debug: /(?:^|[?&])comment_debug=1(?:&|$)/.test(window.location.search) || (window.localStorage && window.localStorage.getItem('comment_debug') === '1')
+        };
+        window.galDeleteComment = function(id) {
+            var commentId = parseInt(id || 0, 10);
+            if (!commentId) return;
+            if (!window.confirm('确认删除这条评论吗？删除后无法恢复。')) return;
+
+            var configEl = document.getElementById('view-counter-config');
+            var csrfToken = configEl ? (configEl.getAttribute('data-csrf') || '') : '';
+            if (!csrfToken && window.GalCommentConfig) {
+                csrfToken = window.GalCommentConfig.csrfToken || '';
+            }
+
+            fetch('/api/comment.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    action: 'delete',
+                    id: commentId,
+                    _csrf: csrfToken
+                })
+            }).then(function(r) {
+                return r.json().then(function(data) { return { status: r.status, data: data }; });
+            }).then(function(result) {
+                if (!result.data || !result.data.success) {
+                    alert((result.data && result.data.message) || '删除失败');
+                    return;
+                }
+                var el = document.getElementById('comment-' + commentId);
+                if (el && el.parentNode) {
+                    el.parentNode.removeChild(el);
+                }
+            }).catch(function() {
+                alert('网络错误，请稍后重试');
+            });
+        };
+    </script>
+    <script src="/assets/js/view-counter.js?v={{ _assets_ver }}"></script>
+    <script src="/assets/js/discussion-comments.js?v={{ _assets_ver }}"></script>
+</body>
+</html>

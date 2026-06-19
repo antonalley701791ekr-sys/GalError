@@ -1,0 +1,30 @@
+{% if recent_errors is not empty %}
+<section>
+    <h2 class="card-header" style="display:flex;justify-content:space-between;align-items:center;">最新报错/解决方案<a href="/error_solutions" class="btn btn-secondary btn-sm" style="font-size:0.8rem;">更多</a></h2>
+    <div class="card-body">
+        {% for error in recent_errors %}
+            <a class="error-card" href="{{ error.url }}">
+                <h3 class="error-title">{{ error.title }}</h3>
+                <div class="error-meta">
+                    <span>游戏：{{ error.game_title }}</span>
+                    <span>分类：{{ error.category_name }}</span>
+                    {% if error.system_category_name %}<span>系统：{{ error.system_category_name }}</span>{% endif %}
+                    <span>时间：{{ error.created_date }}</span>
+                    <span class="view-count-inline" title="浏览量">{{ error.view_count }}</span>
+                    <span class="comment-count-inline" title="评论数">{{ error.comment_count }}</span>
+                </div>
+                <div class="error-content">
+                    <div class="error-section">
+                        <h4>解决方案摘要：</h4>
+                        {% if error.solution_summary %}
+                            <p class="error-solution-summary">{{ error.solution_summary }}</p>
+                        {% else %}
+                            <p class="text-muted">暂无解决方案，等待补充</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

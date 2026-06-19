@@ -1,0 +1,14 @@
+<div class="card">
+    <div class="card-header">当前域名（{{ currentDomains|length }}）</div>
+    <div class="card-body">
+        {% if currentDomains is empty %}
+            <div class="text-center" style="padding:40px;"><span class="text-muted">当前没有白名单域名</span></div>
+        {% else %}
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                {% for domain in currentDomains %}
+                    <span style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:var(--glass-bg);border:1px solid var(--glass-border);font-size:13px;word-break:break-all;">{{ domain }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>

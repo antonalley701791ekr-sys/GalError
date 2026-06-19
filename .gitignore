@@ -1,0 +1,14 @@
+includes/config.secret.php
+includes/config.secret.*.php
+data/
+*.log
+*.bak
+*.bak-*
+includes/config.php.bak-*
+/vendor/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+cache/

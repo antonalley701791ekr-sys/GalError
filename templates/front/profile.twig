@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _user_css_ver }}">
+    {% if is_owner and tab == 'info' %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    {% endif %}
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+{{ header_html|raw }}
+<main class="main">
+    <div class="container">
+        {% if page_html is defined and page_html %}
+            {{ page_html|raw }}
+        {% else %}
+            {% if message %}
+                <div class="alert-{{ message_type }}" style="margin-bottom: 20px;">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            <div class="profile-layout">
+                <div class="profile-sidebar">
+                    <div class="profile-sidebar-card">
+                        <div class="profile-avatar-wrapper">
+                            {% if current_user.avatar_url %}
+                                <img src="{{ current_user.avatar_url }}" class="profile-avatar-large" alt="头像">
+                            {% else %}
+                                <div class="profile-avatar-large fallback">{{ current_user.avatar_fallback }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="profile-username">{{ current_user.username }}</div>
+                        <div class="profile-role">
+                            <span class="user-role-badge role-{{ current_user.role }}">{{ current_user.role_label }}</span>
+                        </div>
+                        {% if not is_owner and is_login %}
+                            <a href="{{ chat_url }}" class="btn btn-sm" style="width:100%;margin-top:12px;margin-bottom:4px;text-align:center;">发私信</a>
+                        {% endif %}
+                        <ul class="profile-menu">
+                            <li><a href="/profile?tab=info{{ user_id_param }}" class="{{ tab == 'info' ? 'active' : '' }}">个人信息</a></li>
+                            <li><a href="/profile?tab=stats{{ user_id_param }}" class="{{ tab == 'stats' ? 'active' : '' }}">数据统计</a></li>
+                            <li><a href="/profile?tab=games{{ user_id_param }}" class="{{ tab == 'games' ? 'active' : '' }}">{{ is_owner ? '游戏管理' : '游戏' }}</a></li>
+                            <li><a href="/profile?tab=errors{{ user_id_param }}" class="{{ tab == 'errors' ? 'active' : '' }}">{{ is_owner ? '报错管理' : '报错' }}</a></li>
+                            <li><a href="/profile?tab=articles{{ user_id_param }}" class="{{ tab == 'articles' ? 'active' : '' }}">{{ is_owner ? '文章管理' : '文章' }}</a></li>
+                            <li><a href="/profile?tab=discussions{{ user_id_param }}" class="{{ tab == 'discussions' ? 'active' : '' }}">{{ is_owner ? '话题管理' : '话题' }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    {% if tab == 'info' %}
+                        {{ info_html|raw }}
+                    {% elseif tab == 'stats' %}
+                        {{ stats_html|raw }}
+                    {% elseif tab == 'games' %}
+                        {{ games_html|raw }}
+                    {% elseif tab == 'errors' %}
+                        {{ errors_html|raw }}
+                    {% elseif tab == 'articles' %}
+                        {{ articles_html|raw }}
+                    {% elseif tab == 'discussions' %}
+                        {{ discussions_html|raw }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{{ footer_html|raw }}
+{{ page_scripts_html|raw }}
+</body>
+</html>

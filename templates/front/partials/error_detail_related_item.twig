@@ -1,0 +1,18 @@
+<a class="error-card" href="{{ related.url }}">
+    <h3 class="error-title">{{ related.title }}</h3>
+    <div class="error-meta">
+        <span class="article-tag-sm">{{ related.category_name }}</span>
+        <span>时间：{{ related.created_at }}</span>
+        <span class="view-count-inline" title="浏览量">{{ related.view_count }}</span>
+    </div>
+    <div class="error-content">
+        <div class="error-section">
+            <h4>解决方案：</h4>
+            {% if related.solution_summary %}
+                <p>{{ related.solution_summary }}</p>
+            {% else %}
+                <p class="text-muted">暂无解决方案</p>
+            {% endif %}
+        </div>
+    </div>
+</a>

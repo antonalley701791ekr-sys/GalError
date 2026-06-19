@@ -1,0 +1,12 @@
+<div class="admin-page-header">
+    <h1>{{ action == 'view_revision' and viewRevision ? '修订详情' : (action == 'view' and viewArticle ? '文章详情' : (action == 'revisions' ? '文章修订' : '')) }}</h1>
+    {% if action == 'view_revision' and viewRevision %}
+        <a href="article_review.php" class="btn btn-secondary">返回列表</a>
+    {% elseif action == 'view' and viewArticle %}
+        <a href="article_review.php" class="btn btn-secondary">返回列表</a>
+    {% elseif action == 'revisions' %}
+        <a href="article_review.php" class="btn btn-secondary">返回列表</a>
+    {% else %}
+        <a href="article_review.php?action=revisions" class="btn btn-secondary">修订记录</a>
+    {% endif %}
+</div>

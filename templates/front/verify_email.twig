@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱验证 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="login-page">
+    <div class="container">
+        <div class="login-container">
+            <h1 class="login-title">邮箱验证</h1>
+            <div class="alert-{{ message_type }}">{{ message }}</div>
+            <p class="login-back-link">
+                {% if message_type == 'success' %}
+                    <a href="/login">去登录</a>
+                {% else %}
+                    <a href="/login">去登录</a> | <a href="/">返回首页</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <script src="/assets/js/theme.js"></script>
+</body>
+</html>

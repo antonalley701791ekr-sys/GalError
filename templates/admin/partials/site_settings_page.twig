@@ -1,0 +1,19 @@
+<div class="admin-page-header">
+    <h1>站点外观</h1>
+</div>
+{% if message %}<div class="admin-alert-{{ message_type }}">{{ message }}</div>{% endif %}
+<form method="post" enctype="multipart/form-data">
+    {{ csrf_input('admin_form')|raw }}
+    {% include 'admin/partials/site_settings_general.twig' %}
+    {% include 'admin/partials/site_settings_branding.twig' %}
+    {% include 'admin/partials/site_settings_backgrounds.twig' %}
+    {% include 'admin/partials/site_settings_announcement.twig' %}
+    {% include 'admin/partials/site_settings_seo.twig' %}
+    {% include 'admin/partials/site_settings_favicon.twig' %}
+    {% include 'admin/partials/site_settings_footer.twig' %}
+    {% include 'admin/partials/site_settings_vndb.twig' %}
+    {% include 'admin/partials/site_settings_custom_css.twig' %}
+    <div style="margin-bottom: 40px;">
+        <button type="submit" class="btn">保存设置</button>
+    </div>
+</form>

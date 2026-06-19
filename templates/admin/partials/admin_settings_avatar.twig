@@ -1,0 +1,22 @@
+<div class="card settings-section"><div class="card-header">头像设置</div><div class="card-body">
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;">
+        {% if currentAdmin.avatar is defined and currentAdmin.avatar and file_exists(constant('BASE_PATH') ~ currentAdmin.avatar) %}
+            <img src="/{{ currentAdmin.avatar }}" class="admin-avatar-large" alt="头像">
+        {% else %}
+            <div class="admin-avatar-large" style="background: var(--glass-bg); display: flex; align-items: center; justify-content: center; color: var(--accent-purple); font-size: 28px;">{{ currentAdmin.username|slice(0,1) }}</div>
+        {% endif %}
+        <div>
+            <p style="color: var(--text-primary); margin-bottom: 5px;">{{ currentAdmin.username }}</p>
+            <p class="text-muted" style="font-size:12px;">角色：{{ currentAdmin.role == 'super' ? '超级管理员' : '子管理员' }}</p>
+        </div>
+    </div>
+    <form method="post" enctype="multipart/form-data" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        {{ csrf_input('admin_form')|raw }}
+        <input type="hidden" name="action" value="upload_avatar">
+        <input type="file" name="avatar" class="form-input" accept="image/jpeg,image/png,image/gif" style="max-width:300px;" required>
+        <button type="submit" class="btn">上传头像</button>
+        {% if currentAdmin.avatar is defined and currentAdmin.avatar %}<button type="submit" name="action" value="delete_avatar" class="btn btn-danger" onclick="return confirm('确定删除头像？')">删除头像</button>{% endif %}
+    </form>
+    <p class="form-hint">支持 JPG/PNG/GIF，单张图片大小不超过 4MB。</p>
+    <p class="form-hint">上传前请确保图片不超过 4MB。</p>
+</div></div>

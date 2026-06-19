@@ -1,0 +1,13 @@
+{% if error_has_solutions %}
+<div class="error-detail-section">
+    <h3>解决方案</h3>
+    {% if solutions is not empty %}
+        <div class="text-muted" style="margin: 2px 0 12px;">共 {{ solutions|length }} 条解决方案，按发布时间排序。</div>
+        {% for solution in solutions %}
+            {% include 'front/partials/error_detail_solution_item.twig' with { error: error, solution: solution } only %}
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">暂无解决方案，等待补充</p>
+    {% endif %}
+</div>
+{% endif %}

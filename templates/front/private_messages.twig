@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私信 - {{ _site_name }}</title>
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ _assets_ver }}">
+    <link rel="stylesheet" href="/assets/css/user.css?v={{ _assets_ver }}">
+    {{ site_head_html|raw }}
+</head>
+<body class="has-fixed-nav">
+    {{ header_html|raw }}
+
+    <main class="main">
+        <div class="container" style="max-width:800px;">
+            <div class="mb-20" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <h2>私信</h2>
+            </div>
+
+            {% if conversations is not empty %}
+                <div class="pm-conversation-list">
+                    {% for conv in conversations %}
+                        <a href="{{ conv.chat_url }}" class="pm-conversation-item">
+                            {% if conv.avatar_url %}
+                                <img src="{{ conv.avatar_url }}" class="pm-avatar" alt="">
+                            {% else %}
+                                <div class="pm-avatar fallback">{{ conv.avatar_fallback }}</div>
+                            {% endif %}
+
+                            <div class="pm-conv-info">
+                                <div class="pm-conv-name">{{ conv.partner_username }}</div>
+                                <div class="pm-conv-preview">{{ conv.last_message_preview }}</div>
+                            </div>
+
+                            <div class="pm-conv-meta">
+                                <span class="pm-conv-time">{{ conv.last_time_text }}</span>
+                                {% if conv.unread_count > 0 %}
+                                    <span class="pm-unread-badge">{{ conv.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center empty-state">
+                        <p>暂无消息</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {{ footer_html|raw }}
+</body>
+</html>

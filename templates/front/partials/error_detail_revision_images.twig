@@ -1,0 +1,2 @@
+{% include 'front/partials/error_detail_revision_screenshot_diff.twig' with { title: '报错截图', alt_text: '报错截图', screenshot_diff: revision.screenshot_diff } only %}
+{% include 'front/partials/error_detail_revision_screenshot_diff.twig' with { title: revision.solution_label ~ '截图', alt_text: '解决方案截图', screenshot_diff: revision.solution_screenshot_diff } only %}

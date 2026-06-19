@@ -1,0 +1,15 @@
+{#
+  error_detail_comment_pagination.twig —— 评论分页条
+  输入（隐式继承自 error_detail_comments / error_detail.twig）：
+    comment_pagination [必填] 分页对象 {page, totalPages, hasPrev, hasNext}；totalPages<=1 时整段不渲染
+    error_id           [必填] 当前报错 ID，用于拼 /error_detail.php?id=...&comment_page=N#commentList
+#}
+{% if comment_pagination.totalPages > 1 %}
+    <div class="pagination" style="margin-top:18px;">
+        {% if comment_pagination.page > 1 %}<a href="/error_detail.php?id={{ error_id }}&comment_page=1#commentList">第一页</a>{% endif %}
+        {% if comment_pagination.hasPrev %}<a href="/error_detail.php?id={{ error_id }}&comment_page={{ comment_pagination.page - 1 }}#commentList">上一页</a>{% endif %}
+        <span class="current">{{ comment_pagination.page }} / {{ comment_pagination.totalPages }}</span>
+        {% if comment_pagination.hasNext %}<a href="/error_detail.php?id={{ error_id }}&comment_page={{ comment_pagination.page + 1 }}#commentList">下一页</a>{% endif %}
+        {% if comment_pagination.page < comment_pagination.totalPages %}<a href="/error_detail.php?id={{ error_id }}&comment_page={{ comment_pagination.totalPages }}#commentList">最后一页</a>{% endif %}
+    </div>
+{% endif %}
