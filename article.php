@@ -283,6 +283,7 @@ window.deleteComment = window.deleteComment || function(commentId) {
     console.error('deleteComment is not available');
 };
 </script>
+<script src="/assets/js/comment-core.js?v=<?php echo ASSETS_VER . '-' . @filemtime(BASE_PATH . '/assets/js/comment-core.js'); ?>"></script>
 <script src="/assets/js/article-comments.js?v=<?php echo ASSETS_VER . '-' . @filemtime(BASE_PATH . '/assets/js/article-comments.js'); ?>"></script>
 <?php
 $pageScriptsHtml = ob_get_clean();
