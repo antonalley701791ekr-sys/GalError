@@ -357,11 +357,14 @@ var MarkdownEditor = (function() {
     }
 
     function insertMentionAction() {
-        var username = prompt('请输入要提及的站内用户名:', '');
-        if (username === null) return;
-        username = String(username).trim().replace(/^@+/, '');
-        if (!username) return;
-        insertAtCursor('@' + username + ' ');
+        // 插入 @ 并立即弹出用户列表（输入更多字符可过滤、点击/回车选择），替代旧的手动 prompt 输入
+        insertAtCursor('@');
+        if (editor) editor.focus();
+        var info = getActiveMentionQuery();
+        if (info) {
+            mentionState.activeRange = info;
+            fetchMentionSuggestions(info.query); // 空 query 时接口返回前若干用户
+        }
     }
 
     /**

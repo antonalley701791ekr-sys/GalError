@@ -24,13 +24,13 @@
         <span class="comment-meta-right">
             <span class="comment-time">{{ comment.created_at|date('Y-m-d H:i') }}</span>
             {% if _is_login %}
-                <button type="button" class="comment-reply-btn" data-comment-id="{{ comment.id }}" data-comment-username="{{ comment.username }}" onclick="if(window.replyToComment){window.replyToComment({{ comment.id }}, '{{ comment.username|e('js') }}');}else if(window.GalCommentInteractions&&window.GalCommentInteractions.handleReply){window.GalCommentInteractions.handleReply({{ comment.id }}, '{{ comment.username|e('js') }}');}">回复</button>
+                <button type="button" class="comment-reply-btn" data-comment-id="{{ comment.id }}" data-comment-username="{{ comment.username }}">回复</button>
             {% endif %}
             {% if _is_login and comment.user_id == current_user_id %}
-                <button type="button" class="comment-reply-btn comment-edit-btn" data-comment-id="{{ comment.id }}" onclick="if(window.editComment){window.editComment({{ comment.id }});}else if(window.GalCommentInteractions&&window.GalCommentInteractions.handleEdit){window.GalCommentInteractions.handleEdit({{ comment.id }});}">编辑</button>
+                <button type="button" class="comment-reply-btn comment-edit-btn" data-comment-id="{{ comment.id }}">编辑</button>
             {% endif %}
             {% if is_admin %}
-                <button type="button" class="comment-delete-btn" data-comment-id="{{ comment.id }}" title="删除评论" onclick="window.galDeleteComment({{ comment.id }});">删除</button>
+                <button type="button" class="comment-delete-btn" data-comment-id="{{ comment.id }}" title="删除评论">删除</button>
             {% endif %}
         </span>
     </div>
