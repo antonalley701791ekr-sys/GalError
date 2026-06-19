@@ -32,7 +32,11 @@
 
         function byId(id) { return document.getElementById(id); }
         function getViewConfig() { return byId('view-counter-config'); }
-        function getCsrfToken() { var el = getViewConfig(); return el ? (el.getAttribute('data-csrf') || '') : ''; }
+        function getCsrfToken() {
+            // 报错页的 csrf 在 window.GalCommentConfig.csrfToken；文章/讨论页在 #view-counter-config[data-csrf]
+            if (window.GalCommentConfig && window.GalCommentConfig.csrfToken) return window.GalCommentConfig.csrfToken;
+            var el = getViewConfig(); return el ? (el.getAttribute('data-csrf') || '') : '';
+        }
 
         function isCommentDebugEnabled() {
             return /(?:^|[?&])comment_debug=1(?:&|$)/.test(window.location.search);
@@ -80,7 +84,7 @@
             editor: null, previewPane: null, modalOverlay: null, submitButton: null,
             cancelReplyButton: null, replyIndicator: null, modalTitle: null, editorBody: null,
             csrfToken: getCsrfToken(), replyParentId: 0, editingCommentId: 0,
-            submitting: false, imageInput: null,
+            submitting: false, imageInput: null, requestKey: '', deleteLock: false,
             mentionPopup: null, mentionItems: [], selectedMentionIndex: 0,
             mentionRange: null, mentionRequestToken: 0
         };
@@ -341,6 +345,107 @@
                 .catch(function (err) { alert(err && err.message ? err.message : '图片上传失败'); });
         }
 
+        // ── 就地渲染（提交后不刷新整页，客户端构建评论并插入 DOM）──
+        function createCommentRequestKey() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return 'cmt_' + window.crypto.randomUUID().replace(/-/g, '');
+            }
+            return 'cmt_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+        }
+
+        function updateCommentCount(delta) {
+            var countEl = byId('commentCount');
+            if (!countEl) return;
+            var current = parseInt((countEl.textContent || '0').replace(/\D+/g, ''), 10);
+            if (isNaN(current)) current = 0;
+            countEl.textContent = String(Math.max(0, current + delta));
+        }
+
+        function removeCommentEmptyState() {
+            var empty = byId('commentEmpty');
+            if (empty && empty.parentNode) empty.parentNode.removeChild(empty);
+        }
+
+        function buildCommentHtml(comment, rawContent) {
+            if (!comment || !comment.id) return '';
+            var cid = parseInt(comment.id, 10);
+            var avatarHtml = comment.avatar_url
+                ? '<img src="' + escapeHtml(comment.avatar_url) + '" class="comment-author-avatar" alt="">'
+                : '<span class="comment-author-avatar fallback">' + escapeHtml((comment.username || '').slice(0, 1)) + '</span>';
+            var replyMeta = '', replyContext = '';
+            if (comment.parent_id && comment.reply_to_username) {
+                var replyUserId = parseInt(comment.reply_to_user_id, 10) || 0;
+                replyMeta = '<span class="comment-reply-to">回复 <a href="/profile?user_id=' + replyUserId + '" class="comment-user-link">' + escapeHtml(comment.reply_to_username) + '</a></span>';
+                if (comment.reply_to_content) {
+                    replyContext = '<div class="comment-reply-context">' +
+                        '<div class="comment-reply-header">回复 <span class="comment-user-link">@' + escapeHtml(comment.reply_to_username) + '</span></div>' +
+                        '<div class="comment-reply-quote">' + escapeHtml(comment.reply_to_content) + '</div>' +
+                        '<div class="comment-reply-divider"></div></div>';
+                }
+            }
+            return '<div class="comment-item" id="comment-' + cid + '" data-comment-content="' + escapeHtml(rawContent) + '">' +
+                '<div class="comment-author"><span class="comment-author-info">' + avatarHtml +
+                '<strong><a href="/profile?user_id=' + (parseInt(comment.user_id, 10) || 0) + '" class="comment-user-link">' + escapeHtml(comment.username || '') + '</a></strong>' + replyMeta +
+                '</span><span class="comment-meta-right"><span class="comment-time">' + escapeHtml(comment.created_at || '') + '</span>' +
+                '<button class="comment-reply-btn" data-comment-id="' + cid + '" data-comment-username="' + escapeHtml(comment.username || '') + '">回复</button>' +
+                '<button class="comment-reply-btn comment-edit-btn" data-comment-id="' + cid + '">编辑</button>' +
+                '</span></div>' +
+                '<div class="comment-body markdown-body">' + replyContext +
+                '<div class="comment-main-content">' + (comment.content_html || '') + '</div></div></div>';
+        }
+
+        function insertCommentIntoList(comment, rawContent) {
+            var list = byId('commentList');
+            if (!list || !comment || !comment.id) return false;
+            removeCommentEmptyState();
+            list.insertAdjacentHTML('beforeend', buildCommentHtml(comment, rawContent));
+            return true;
+        }
+
+        function updateExistingComment(commentId, contentHtml, rawContent) {
+            var item = byId('comment-' + commentId);
+            if (!item) return false;
+            item.setAttribute('data-comment-content', rawContent || '');
+            var mainContent = item.querySelector('.comment-main-content');
+            if (mainContent) mainContent.innerHTML = contentHtml || '';
+            return true;
+        }
+
+        function goToComment(commentId, redirectUrl) {
+            var hash = '#comment-' + commentId;
+            var target = byId('comment-' + commentId);
+            if (target) {
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, document.title, window.location.pathname + window.location.search + hash);
+                } else { window.location.hash = hash; }
+                if (window.GalCommentInteractions && typeof window.GalCommentInteractions.highlightCommentByHash === 'function') {
+                    window.GalCommentInteractions.highlightCommentByHash(hash);
+                } else {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            if (redirectUrl) { window.location.assign(redirectUrl); return; }
+            window.location.reload();
+        }
+
+        function finishSubmit() {
+            state.requestKey = '';
+            state.submitting = false;
+            if (state.submitButton) { state.submitButton.disabled = false; state.submitButton.textContent = '提交评论'; }
+            closeCommentModal();
+        }
+
+        // 就地插入失败时的兜底：跳转/刷新到新评论（同页则强制 reload，兼容美化/非美化 URL）
+        function navigateToComment(data) {
+            var target = (data && data.redirect_url) || (window.location.pathname + window.location.search);
+            var a = document.createElement('a');
+            a.href = target;
+            var samePage = (a.origin + a.pathname + a.search) === (window.location.origin + window.location.pathname + window.location.search);
+            if (samePage) { if (a.hash) { try { window.location.hash = a.hash; } catch (e) {} } window.location.reload(); }
+            else { window.location.assign(target); }
+        }
+
         function submitComment() {
             // 重入守卫：兼容模板里“inline onclick + #commentSubmitBtn 事件委托”双触发，避免重复提交
             if (state.submitting) { debugWarn('submitComment ignored: already submitting'); return; }
@@ -352,55 +457,57 @@
             btn.disabled = true;
             btn.textContent = state.editingCommentId ? '保存中...' : '提交中...';
 
-            var payload = state.editingCommentId
-                ? { action: 'update', id: state.editingCommentId, content: rawContent }
-                : { action: 'create', content_type: CONTENT_TYPE, content_id: getContentId(), content: rawContent, parent_id: state.replyParentId || null };
-
+            var payload;
+            if (state.editingCommentId) {
+                payload = { action: 'update', id: state.editingCommentId, content: rawContent };
+            } else {
+                state.requestKey = createCommentRequestKey();
+                payload = { action: 'create', content_type: CONTENT_TYPE, content_id: getContentId(), content: rawContent, parent_id: state.replyParentId || null, idempotency_key: state.requestKey };
+            }
             var requestBody = Object.assign({ _csrf: state.csrfToken }, payload);
+
             fetch('/api/comment.php', {
                 method: 'POST', credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrfToken },
                 body: JSON.stringify(requestBody)
             })
-                .then(function (r) { return r.json(); })
+                .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
                 .then(function (data) {
-                    state.submitting = false;
-                    btn.disabled = false;
-                    btn.textContent = state.editingCommentId ? '保存修改' : '提交评论';
-                    if (!data || !data.success) { alert((data && data.message) || '提交失败'); return; }
-                    if (state.editingCommentId && data.comment) {
-                        var item = byId('comment-' + state.editingCommentId);
-                        if (item) {
-                            item.setAttribute('data-comment-content', data.comment.content || rawContent);
-                            var contentEl = item.querySelector('.comment-main-content');
-                            if (contentEl) contentEl.innerHTML = data.comment.content_html || '';
-                        }
-                    } else {
-                        // 跳转到新评论。健壮处理：若目标只是“当前页 + #锚点”，location.assign 不会刷新（只滚动），
-                        // 新评论就不会显示。这里判断目标是否同页，同页则强制 reload，保证任何 URL（美化/非美化）下都能刷新出新评论。
-                        var target = data.redirect_url || (window.location.pathname + window.location.search);
-                        var a = document.createElement('a');
-                        a.href = target;
-                        var samePage = (a.origin + a.pathname + a.search) === (window.location.origin + window.location.pathname + window.location.search);
-                        if (samePage) {
-                            if (a.hash) { try { window.location.hash = a.hash; } catch (e) {} }
-                            window.location.reload();
-                        } else {
-                            window.location.assign(target);
-                        }
+                    if (!data || !data.success) {
+                        state.submitting = false;
+                        btn.disabled = false;
+                        btn.textContent = state.editingCommentId ? '保存修改' : '提交评论';
+                        if (!state.editingCommentId) state.requestKey = '';
+                        alert((data && data.message) || '提交失败');
+                        return;
                     }
-                    closeCommentModal();
+                    if (state.editingCommentId) {
+                        var updated = updateExistingComment(state.editingCommentId, data.comment && data.comment.content_html, rawContent);
+                        finishSubmit();
+                        if (updated) { goToComment(state.editingCommentId, data.redirect_url || ''); } else { navigateToComment(data); }
+                        return;
+                    }
+                    var inserted = insertCommentIntoList(data.comment, rawContent);
+                    updateCommentCount(1);
+                    finishSubmit();
+                    if (inserted) { goToComment(data.comment && data.comment.id, data.redirect_url || ''); } else { navigateToComment(data); }
                 })
                 .catch(function (err) {
                     state.submitting = false;
                     btn.disabled = false;
                     btn.textContent = state.editingCommentId ? '保存修改' : '提交评论';
+                    if (!state.editingCommentId) state.requestKey = '';
                     debugWarn('submitComment failed', err);
                     alert('网络错误，请稍后重试');
                 });
         }
 
         function deleteComment(commentId) {
+            // 同一次点击只处理一次：模板 inline onclick 与核心事件委托会双触发，
+            // 利用 confirm() 阻塞 + setTimeout(0) 下一 tick 解锁，挡掉同一次点击的第二次调用（避免弹两次确认）。
+            if (state.deleteLock) return;
+            state.deleteLock = true;
+            setTimeout(function () { state.deleteLock = false; }, 0);
             if (!confirm('确定删除此评论？')) return;
             fetch('/api/comment.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrfToken }, body: JSON.stringify({ _csrf: state.csrfToken, action: 'delete', id: commentId }) })
                 .then(function (r) { return r.json(); })
