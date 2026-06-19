@@ -80,6 +80,7 @@
             editor: null, previewPane: null, modalOverlay: null, submitButton: null,
             cancelReplyButton: null, replyIndicator: null, modalTitle: null, editorBody: null,
             csrfToken: getCsrfToken(), replyParentId: 0, editingCommentId: 0,
+            submitting: false, imageInput: null,
             mentionPopup: null, mentionItems: [], selectedMentionIndex: 0,
             mentionRange: null, mentionRequestToken: 0
         };
@@ -237,7 +238,7 @@
             var wrapMap = { bold: ['**', '**', '粗体文本'], italic: ['*', '*', '斜体文本'], strikethrough: ['~~', '~~', '删除线文本'], code: ['`', '`', '代码'] };
             if (wrapMap[action]) { wrapSelection(wrapMap[action][0], wrapMap[action][1], wrapMap[action][2]); renderPreview(); return; }
             if (action === 'link') { var url = prompt('请输入链接地址:', 'https://'); if (!url) return; wrapSelection('[', '](' + url + ')', '链接文本'); renderPreview(); return; }
-            if (action === 'image') { uploadImage(); return; }
+            if (action === 'image') { if (config.multiImageUpload) { triggerMultiImageUpload(); } else { uploadImage(); } return; }
             if (action === 'mention') { var name = prompt('请输入要提及的站内用户名:', ''); if (name == null) return; insertAtCursor('@' + String(name).replace(/^@+/, '').trim() + ' '); renderPreview(); return; }
             if (action === 'codeblock') { insertAtCursor('\n```\n代码内容\n```\n'); renderPreview(); return; }
             if (action === 'ul') { insertAtLineStart('- '); renderPreview(); return; }
@@ -295,11 +296,59 @@
             input.click();
         }
 
+        // 多图上传（config.multiImageUpload=true 时启用，如讨论页）：支持一次多选，逐张上传后插入
+        function ensureImageInput() {
+            if (state.imageInput) return state.imageInput;
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            input.style.display = 'none';
+            document.body.appendChild(input);
+            input.addEventListener('change', function () {
+                var files = Array.prototype.slice.call(input.files || []);
+                if (files.length) uploadCommentImagesMulti(files);
+                input.value = '';
+            });
+            state.imageInput = input;
+            return input;
+        }
+
+        function triggerMultiImageUpload() {
+            var input = ensureImageInput();
+            if (input) input.click();
+        }
+
+        function uploadCommentImagesMulti(files) {
+            var list = Array.prototype.slice.call(files || []);
+            var images = [];
+            list.forEach(function (file) {
+                if (!file || !file.type || file.type.indexOf('image/') !== 0) return;
+                if (file.size > 4 * 1024 * 1024) { alert('图片大小不能超过 4MB'); return; }
+                images.push(file);
+            });
+            if (!images.length) return;
+            var uploadOne = function (file) {
+                var formData = new FormData();
+                formData.append('action', 'upload_image');
+                formData.append('image', file);
+                return fetch('/api/comment.php', { method: 'POST', credentials: 'same-origin', headers: state.csrfToken ? { 'X-CSRF-Token': state.csrfToken } : {}, body: formData })
+                    .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+                    .then(function (data) { if (!data || !data.success || !data.url) { throw new Error((data && data.message) ? data.message : '图片上传失败'); } return data.url; });
+            };
+            Promise.all(images.map(uploadOne))
+                .then(function (urls) { urls.forEach(function (url) { insertAtCursor('![](' + url + ')\n'); }); renderPreview(); state.editor.focus(); })
+                .catch(function (err) { alert(err && err.message ? err.message : '图片上传失败'); });
+        }
+
         function submitComment() {
+            // 重入守卫：兼容模板里“inline onclick + #commentSubmitBtn 事件委托”双触发，避免重复提交
+            if (state.submitting) { debugWarn('submitComment ignored: already submitting'); return; }
             var rawContent = state.editor && state.editor.value || '';
             if (!rawContent.trim()) { debugWarn('submitComment aborted: empty content'); alert('请输入评论内容'); return; }
             var btn = state.submitButton;
             if (!btn) { debugWarn('submitComment aborted: submit button missing'); return; }
+            state.submitting = true;
             btn.disabled = true;
             btn.textContent = state.editingCommentId ? '保存中...' : '提交中...';
 
@@ -315,6 +364,7 @@
             })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
+                    state.submitting = false;
                     btn.disabled = false;
                     btn.textContent = state.editingCommentId ? '保存修改' : '提交评论';
                     if (!data || !data.success) { alert((data && data.message) || '提交失败'); return; }
@@ -326,11 +376,23 @@
                             if (contentEl) contentEl.innerHTML = data.comment.content_html || '';
                         }
                     } else {
-                        window.location.assign(data.redirect_url || window.location.pathname + window.location.search);
+                        // 跳转到新评论。健壮处理：若目标只是“当前页 + #锚点”，location.assign 不会刷新（只滚动），
+                        // 新评论就不会显示。这里判断目标是否同页，同页则强制 reload，保证任何 URL（美化/非美化）下都能刷新出新评论。
+                        var target = data.redirect_url || (window.location.pathname + window.location.search);
+                        var a = document.createElement('a');
+                        a.href = target;
+                        var samePage = (a.origin + a.pathname + a.search) === (window.location.origin + window.location.pathname + window.location.search);
+                        if (samePage) {
+                            if (a.hash) { try { window.location.hash = a.hash; } catch (e) {} }
+                            window.location.reload();
+                        } else {
+                            window.location.assign(target);
+                        }
                     }
                     closeCommentModal();
                 })
                 .catch(function (err) {
+                    state.submitting = false;
                     btn.disabled = false;
                     btn.textContent = state.editingCommentId ? '保存修改' : '提交评论';
                     debugWarn('submitComment failed', err);
@@ -347,11 +409,11 @@
         }
 
         function deleteDiscussion(id) {
-            if (!confirm('确定删除此话题？删除后不可恢复。')) return;
-            fetch('/api/discussion.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id: id }) })
-                .then(function (r) { return r.json(); })
-                .then(function (data) { if (data && data.success) window.location.href = '/discussions'; else alert((data && data.message) || '删除失败'); })
-                .catch(function () { alert('网络错误'); });
+            // 删除话题：跳转到服务端删除入口（与讨论页历史行为一致；文章页不存在此按钮，无影响）
+            var discussionId = parseInt(id || 0, 10);
+            if (!discussionId) return;
+            if (!window.confirm('确认删除这个话题吗？删除后无法恢复。')) return;
+            window.location.href = '/discussion_delete.php?id=' + discussionId;
         }
 
         function onEditorKeydown(e) {
