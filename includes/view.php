@@ -56,6 +56,8 @@ function renderTwig(string $template, array $data = []): string
     $data['_user_card_js_ver'] = ASSETS_VER . '-' . (@filemtime(BASE_PATH . 'assets/js/user-card.js') ?: time());
     $data['_markdown_editor_css_ver'] = ASSETS_VER . '-' . (@filemtime(BASE_PATH . 'assets/css/markdown-editor.css') ?: time());
     $data['_todo_floating_js_ver'] = ASSETS_VER . '-' . (@filemtime(BASE_PATH . 'assets/js/todo-floating.js') ?: time());
+    // 评论核心：改动频繁，带 filemtime 自动破缓存（改文件即换 URL，无需递增 ASSETS_VER）
+    $data['_comment_core_js_ver'] = ASSETS_VER . '-' . (@filemtime(BASE_PATH . 'assets/js/comment-core.js') ?: time());
 
     if (str_starts_with($template, 'admin/')) {
         $adminPage = basename($_SERVER['SCRIPT_NAME'] ?? '');
