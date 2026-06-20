@@ -35,7 +35,7 @@ define('UPLOAD_PATH', 'data/');
 define('UPLOAD_URL', '/data/');  // 前端 URL 用绝对路径（避免在 /game/123 等美化URL下相对路径出错）
 define('MAX_FILE_SIZE', 4 * 1024 * 1024); // 4MB
 define('ONLINE_TIMEOUT_MINUTES', 10); // 在线状态超时（分钟）
-define('ASSETS_VER', '20260614-comment-unify-2'); // 静态资源版本号，修改 CSS/JS 后递增以破缓存
+define('ASSETS_VER', '20260620-css-cleanup-1'); // 静态资源版本号，修改 CSS/JS 后递增以破缓存
 // 数据库结构版本号。新增/修改迁移后递增本值，下次加载会自动执行一遍迁移（见 includes/migrations/runner.php）
 define('SCHEMA_VERSION', '2026-06-13');
 

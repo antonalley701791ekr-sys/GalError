@@ -263,10 +263,7 @@
 }
 
 /* --- 评论回复引用块与目标评论高亮 --- */
-.comment-item {
-    transition: background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
-}
-
+/* .comment-item 基础过渡已合并到 style.css（消除与 style.css 同名定义的 transition 冲突）；此处仅保留 flash 高亮状态 */
 .comment-item.is-flash-highlight {
     background: rgba(167, 139, 250, 0.06) !important;
     box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.22), 0 0 0 8px rgba(167, 139, 250, 0.08), var(--shadow-card) !important;
